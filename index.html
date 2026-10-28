@@ -157,7 +157,7 @@
 
         <!-- Camera Viewport Box -->
         <div class="relative w-full aspect-square max-h-72 bg-[#0C0E11] rounded-lg overflow-hidden border border-[#282F38] flex items-center justify-center">
-          <video id="cameraVideo" class="w-full h-full object-cover hidden" playsinline muted></video>
+          <video id="cameraVideo" class="w-full h-full object-cover hidden" playsinline autoplay muted></video>
           <canvas id="cameraCanvas" class="hidden"></canvas>
 
           <!-- Idle Placeholder with "Aktifkan Kamera QR" Button -->
@@ -573,6 +573,21 @@
       return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     }
 
+    // Unlock AudioContext saat interaksi pertama pengguna (penting di iOS/Android)
+    function unlockAudioEngine() {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          if (!audioCtx) {
+            audioCtx = new AudioContextClass();
+          }
+          if (audioCtx.state === "suspended") {
+            audioCtx.resume();
+          }
+        }
+      } catch (e) {}
+    }
+
     // =========================================================================
     // 4. CORE QR SCAN LOCK & AUDIO PLAYBACK ENGINE
     // =========================================================================
@@ -901,6 +916,154 @@
     }
 
     // =========================================================================
+    // 5. CAMERA & QR SCANNING ENGINE
+    // =========================================================================
+    async function startCamera() {
+      // Unlock AudioContext saat interaksi klik tombol kamera
+      unlockAudioEngine();
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showToast("Browser ini tidak mendukung akses kamera.", "warn");
+        return;
+      }
+
+      // Hentikan stream sebelumnya jika sedang berjalan (mis. saat ganti kamera)
+      if (cameraStream) {
+        stopCamera(false);
+      }
+
+      try {
+        let stream = null;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: { ideal: facingMode },
+              width: { ideal: 640 },
+              height: { ideal: 640 }
+            },
+            audio: false
+          });
+        } catch (firstErr) {
+          // Fallback ke konfigurasi video standar jika constraint spesifik gagal
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+          });
+        }
+
+        cameraStream = stream;
+        cameraVideo.srcObject = stream;
+        cameraVideo.setAttribute("playsinline", "true");
+        await cameraVideo.play();
+
+        isCameraRunning = true;
+        cameraVideo.classList.remove("hidden");
+        cameraPlaceholder.classList.add("hidden");
+        scanGuideOverlay.classList.remove("hidden");
+        if (btnToggleCameraLabel) {
+          btnToggleCameraLabel.textContent = "Matikan Kamera";
+        }
+
+        showToast("Kamera QR aktif. Arahkan ke kode QR.", "success");
+
+        if (scanRafId) cancelAnimationFrame(scanRafId);
+        scanRafId = requestAnimationFrame(scanFrameLoop);
+      } catch (err) {
+        isCameraRunning = false;
+        showToast("Gagal mengakses kamera. Pastikan izin kamera diberikan.", "warn");
+      }
+    }
+
+    function stopCamera(resetUi = true) {
+      if (scanRafId) {
+        cancelAnimationFrame(scanRafId);
+        scanRafId = null;
+      }
+      if (cameraStream) {
+        cameraStream.getTracks().forEach((track) => track.stop());
+        cameraStream = null;
+      }
+      cameraVideo.srcObject = null;
+      isCameraRunning = false;
+
+      if (resetUi) {
+        cameraVideo.classList.add("hidden");
+        scanGuideOverlay.classList.add("hidden");
+        cameraPlaceholder.classList.remove("hidden");
+        if (btnToggleCameraLabel) {
+          btnToggleCameraLabel.textContent = "Mulai Kamera";
+        }
+      }
+    }
+
+    function scanFrameLoop() {
+      if (!isCameraRunning) return;
+
+      if (
+        !isPlayingAudio &&
+        cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA
+      ) {
+        const vw = cameraVideo.videoWidth;
+        const vh = cameraVideo.videoHeight;
+        if (vw > 0 && vh > 0) {
+          cameraCanvas.width = vw;
+          cameraCanvas.height = vh;
+          const ctx = cameraCanvas.getContext("2d", { willReadFrequently: true });
+          ctx.drawImage(cameraVideo, 0, 0, vw, vh);
+          const imageData = ctx.getImageData(0, 0, vw, vh);
+
+          if (typeof jsQR === "function") {
+            const qrResult = jsQR(imageData.data, imageData.width, imageData.height, {
+              inversionAttempts: "dontInvert"
+            });
+            if (qrResult && qrResult.data) {
+              handleDetectedQrCode(qrResult.data, "Kamera");
+            }
+          }
+        }
+      }
+
+      scanRafId = requestAnimationFrame(scanFrameLoop);
+    }
+
+    // Handler unggah gambar QR
+    qrFileInput.addEventListener("change", (e) => {
+      unlockAudioEngine();
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          if (typeof jsQR === "function") {
+            const qrResult = jsQR(imageData.data, imageData.width, imageData.height, {
+              inversionAttempts: "attemptBoth"
+            });
+            if (qrResult && qrResult.data) {
+              handleDetectedQrCode(qrResult.data, "Gambar QR");
+            } else {
+              showToast("Kode QR tidak terdeteksi pada gambar tersebut.", "warn");
+            }
+          }
+        };
+        img.onerror = () => {
+          showToast("Gagal memuat file gambar.", "warn");
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+      qrFileInput.value = "";
+    });
+
+    // =========================================================================
     // 6. EVENT HANDLERS & CHEAT CODE SYSTEM
     // =========================================================================
     function switchTab(tabName) {
@@ -1062,6 +1225,7 @@
       if (action === "preview-qr") {
         renderQrCodePreview(item);
       } else if (action === "test-scan") {
+        unlockAudioEngine();
         switchTab("scanner");
         handleDetectedQrCode(item.qrCode, "Uji Daftar");
       } else if (action === "delete-map") {
@@ -1118,6 +1282,13 @@
     });
 
     btnStartCameraCenter.addEventListener("click", () => startCamera());
+    btnToggleCamera.addEventListener("click", () => {
+      if (isCameraRunning) {
+        stopCamera(true);
+      } else {
+        startCamera();
+      }
+    });
 
     btnSwitchFacing.addEventListener("click", () => {
       facingMode = facingMode === "environment" ? "user" : "environment";
