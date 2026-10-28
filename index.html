@@ -120,11 +120,24 @@
             </span>
           </div>
 
-          <!-- Icon-Only Action Buttons (Ganti Kamera & Gambar QR) -->
+          <!-- Icon-Only Action Buttons (Power Kamera, Ganti Kamera & Gambar QR) -->
           <div class="flex items-center gap-1.5">
-            <!-- Hidden Mulai Kamera button (aktivasi hanya lewat tombol di tengah kotak kamera) -->
-            <button id="btnToggleCamera" type="button" class="hidden">
-              <span id="btnToggleCameraLabel">Mulai Kamera</span>
+            <!-- Tombol Toggle Kamera -->
+            <button
+              id="btnToggleCamera"
+              type="button"
+              title="Aktifkan Kamera"
+              aria-label="Toggle Kamera"
+              class="w-8 h-8 rounded-lg bg-[#0C0E11] hover:bg-slate-800 text-slate-300 hover:text-emerald-400 transition border border-[#282F38] flex items-center justify-center"
+            >
+              <svg id="iconCameraOffState" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <svg id="iconCameraOnState" class="w-4 h-4 hidden text-rose-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+              </svg>
+              <span id="btnToggleCameraLabel" class="sr-only">Mulai Kamera</span>
             </button>
 
             <!-- Ganti Kamera (Icon Only) -->
@@ -200,22 +213,40 @@
           <div id="scanSuccessFlash" class="hidden pointer-events-none absolute inset-0 bg-emerald-400/25 border-2 border-emerald-400 rounded-lg z-10 transition-opacity duration-200"></div>
 
           <!-- Audio Playing Lock Overlay -->
-          <div id="playingLockOverlay" class="hidden absolute inset-0 bg-[#0C0E11]/90 backdrop-blur-sm flex flex-col items-center justify-center p-5 text-center z-20">
-            <div class="flex items-end gap-1 h-7 mb-2.5">
+          <div id="playingLockOverlay" class="hidden absolute inset-0 bg-[#0C0E11]/92 backdrop-blur-sm flex flex-col items-center justify-center p-5 text-center z-20">
+            <!-- Active Playing View: Animated Equalizer -->
+            <div id="overlayEqContainer" class="flex items-end gap-1 h-7 mb-2.5">
               <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-1"></span>
               <span class="w-1.5 h-6 bg-emerald-400 rounded-full eq-bar-2"></span>
               <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-3"></span>
               <span class="w-1.5 h-6 bg-emerald-400 rounded-full eq-bar-4"></span>
               <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-5"></span>
             </div>
-            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-1.5">
+
+            <!-- Waiting for Tap to Play View: Large Glowing Play Icon -->
+            <div id="overlayTapIconContainer" class="hidden w-14 h-14 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 mb-2.5 animate-pulse cursor-pointer shadow-lg shadow-emerald-500/30">
+              <svg class="w-7 h-7 fill-current translate-x-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+
+            <span id="overlayBadgeStatus" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-1.5">
               Sedang Memutar Audio
             </span>
             <h3 id="overlayTrackTitle" class="text-sm font-bold text-white mb-1 truncate max-w-xs">Memutar Audio...</h3>
             <p id="overlayQrValue" class="hidden">QR: -</p>
-            <p class="text-[11px] text-[#8B949E] max-w-xs leading-snug">
+            <p id="overlayHintText" class="text-[11px] text-[#8B949E] max-w-xs leading-snug mb-3">
               Pemindai akan aktif kembali otomatis setelah audio selesai.
             </p>
+
+            <!-- Tombol Sentuh untuk Mulai Memutar di Layar Utama (Saat Autoplay ditahan) -->
+            <button id="btnOverlayTapToPlay" type="button" class="hidden px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-500/30 mb-2">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              Sentuh untuk Mendengarkan Audio
+            </button>
+
+            <button id="btnStopPlaybackOverlay" type="button" class="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 active:scale-95 text-rose-300 border border-rose-500/40 text-[11px] font-semibold transition flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+              Hentikan Audio
+            </button>
           </div>
         </div>
 
@@ -230,9 +261,18 @@
       <div class="bg-[#1A1E24] border border-[#282F38] rounded-xl p-3.5 shadow-xl">
         <div class="flex items-center justify-between gap-2 mb-2">
           <span class="text-[11px] font-medium text-[#8B949E] uppercase tracking-wider">Audio</span>
-          <span id="playerStatePill" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#0C0E11] text-slate-300 border border-[#282F38]">
-            Menunggu Scan
-          </span>
+          <div class="flex items-center gap-2">
+            <button id="btnPlayerReplay" type="button" class="hidden text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-1">
+              <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+              Putar Ulang
+            </button>
+            <button id="btnPlayerStop" type="button" class="hidden text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition">
+              Hentikan
+            </button>
+            <span id="playerStatePill" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#0C0E11] text-slate-300 border border-[#282F38]">
+              Menunggu Scan
+            </span>
+          </div>
         </div>
 
         <div class="bg-[#0C0E11] border border-[#282F38] rounded-lg p-3">
@@ -253,6 +293,19 @@
             <div class="w-full h-1.5 bg-[#1A1E24] rounded-full overflow-hidden">
               <div id="audioProgressBar" class="h-full bg-emerald-500 transition-all duration-150" style="width: 0%"></div>
             </div>
+          </div>
+
+          <!-- Autoplay Prompt saat Dibuka dari Link QR di HP -->
+          <div id="autoplayBanner" class="hidden mt-3 p-3 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-center animate-pulse">
+            <div class="flex items-center justify-center gap-1.5 mb-1 text-emerald-300 font-bold text-xs">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+              <span>Audio Siap Diputar</span>
+            </div>
+            <p id="autoplayTrackTitle" class="text-xs font-semibold text-white mb-2 truncate">Cerita Rakyat</p>
+            <button id="btnAutoplayTrigger" type="button" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              Sentuh untuk Mendengarkan Audio
+            </button>
           </div>
 
           <p id="lockExplanationText" class="hidden"></p>
@@ -372,12 +425,23 @@
 
           <!-- Pratinjau Kode QR -->
           <div id="qrPreviewCard" class="mt-3 pt-3 border-t border-[#282F38] flex flex-col gap-3 bg-[#0C0E11] p-3.5 rounded-lg">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#282F38] pb-2">
-              <span class="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">Generator Kode QR</span>
-              <label class="flex items-center gap-1.5 cursor-pointer select-none">
-                <input id="chkPortableQrMode" type="checkbox" class="rounded bg-[#1A1E24] border-[#282F38] text-emerald-500 focus:ring-0" />
-                <span class="text-[11px] font-medium text-slate-200">Sertakan Sumber Audio di QR (Mode Mandiri)</span>
-              </label>
+            <div class="flex flex-col gap-2 border-b border-[#282F38] pb-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">Generator Kode QR</span>
+                <div class="flex items-center gap-1.5">
+                  <label for="selectQrFormatMode" class="text-[11px] text-slate-300 font-medium">Format:</label>
+                  <select id="selectQrFormatMode" class="text-[11px] bg-[#1A1E24] border border-[#282F38] text-emerald-300 rounded px-2 py-1 focus:outline-none focus:border-emerald-500">
+                    <option value="web_url" selected>🌐 Link Web (Buka di Kamera HP)</option>
+                    <option value="id_only">⚡ ID Singkat (Scanner Web)</option>
+                    <option value="portable">📦 Mandiri (Portable Audio)</option>
+                  </select>
+                </div>
+              </div>
+              <div id="containerBaseUrlInput" class="flex items-center gap-2">
+                <label for="inputBaseWebUrl" class="text-[10px] text-[#8B949E] shrink-0 font-medium">Base URL:</label>
+                <input id="inputBaseWebUrl" type="text" class="w-full text-[11px] font-mono-code px-2 py-1 rounded bg-[#1A1E24] border border-[#282F38] text-emerald-300 focus:outline-none focus:border-emerald-500" placeholder="https://rifkiindrazakaria.github.io/CeritaRakyat/" />
+              </div>
+              <input id="chkPortableQrMode" type="checkbox" class="hidden" />
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-4">
               <!-- Ukuran QR diperbesar (180x180) dengan Quiet Zone putih yang lebar agar kamera langsung merespon -->
@@ -386,11 +450,11 @@
                 <h4 id="qrPreviewTitle" class="text-xs font-bold text-white truncate">Pilih item di atas</h4>
                 <p id="qrPreviewCodeText" class="text-[11px] font-mono-code text-emerald-300 break-all mt-1">-</p>
                 <p id="qrPreviewSubHint" class="text-[11px] text-[#8B949E] mt-1.5 leading-relaxed">
-                  Ukuran kode QR dioptimalkan dengan titik renggang agar kamera HP langsung mendeteksi dalam sekali arah.
+                  Mode Link Web: Kode QR langsung membuka website dan memutar audio saat dipindai kamera HP mana pun.
                 </p>
                 <div class="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
                   <button id="btnDownloadQr" type="button" class="px-3 py-1.5 rounded-lg bg-[#1A1E24] hover:bg-slate-800 text-emerald-300 border border-[#282F38] text-[11px] font-semibold transition">
-                    Unduh Gambar QR
+                    Unduh Gambar QR (+ Judul)
                   </button>
                 </div>
               </div>
@@ -399,10 +463,10 @@
 
           <!-- Info Singkat Sinkronisasi GitHub -->
           <div class="mt-2.5 p-2.5 rounded-lg bg-[#0C0E11]/70 border border-[#282F38] text-[11px] text-[#8B949E] leading-relaxed">
-            <p class="font-semibold text-slate-300 mb-0.5">Agar Audio GitHub Berjalan di Perangkat Lain:</p>
+            <p class="font-semibold text-slate-300 mb-0.5">Panduan Scan QR Lintas Perangkat / HP:</p>
             <ul class="list-disc list-inside space-y-0.5">
-              <li>Taruh file audio di repo GitHub (contoh: <code class="text-emerald-300 font-mono-code">./audio/koleksi-01.mp3</code> atau link GitHub <code class="text-emerald-300 font-mono-code">github.com/.../blob/.../file.mp3</code>).</li>
-              <li>Gunakan <strong>QR Mandiri</strong> (otomatis menyimpan link audio di dalam QR) <em>atau</em> klik <strong>Salin JSON GitHub</strong> lalu simpan ke file <code class="text-amber-300 font-mono-code">qr-mappings.json</code> di repositori Anda.</li>
+              <li>Pilih format <strong>Link Web</strong> agar saat discan menggunakan <strong>Kamera bawaan HP</strong> (iPhone/Android/Google Lens), HP otomatis membuka website ini dan memutar audio cerita rakyat.</li>
+              <li>File audio tersimpan di repositori GitHub (<code class="text-emerald-300 font-mono-code">./audio/1.mp3</code> sampai <code class="text-emerald-300 font-mono-code">10.mp3</code>) dan otomatis disinkronkan melalui file <code class="text-amber-300 font-mono-code">qr-mappings.json</code>.</li>
             </ul>
           </div>
         </div>
@@ -424,43 +488,131 @@
     // =========================================================================
     const INITIAL_QR_MAPPINGS = [
       {
+        qrCode: "1",
+        title: "Cerita Bagian 1 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/1.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "2",
+        title: "Cerita Bagian 2 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/2.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "3",
+        title: "Cerita Bagian 3 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/3.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "4",
+        title: "Cerita Bagian 4 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/4.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "5",
+        title: "Cerita Bagian 5 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/5.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "6",
+        title: "Cerita Bagian 6 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/6.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "7",
+        title: "Cerita Bagian 7 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/7.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "8",
+        title: "Cerita Bagian 8 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/8.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "9",
+        title: "Cerita Bagian 9 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/9.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "10",
+        title: "Cerita Bagian 10 — Suling dan Burung",
+        mode: "url",
+        audioUrl: "./audio/10.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
+        qrCode: "tes",
+        title: "Uji Coba Audio Singkat (Tes)",
+        mode: "url",
+        audioUrl: "./audio/tes.mp3",
+        ttsText: "",
+        synthPreset: "chime"
+      },
+      {
         qrCode: "QR-AUDIO-01",
         title: "Pos 1: Sambutan & Pengantar (Chime)",
         mode: "synth",
-        synthPreset: "chime",
         audioUrl: "",
-        ttsText: ""
+        ttsText: "",
+        synthPreset: "chime"
       },
       {
         qrCode: "QR-AUDIO-02",
         title: "Pos 2: Fanfare Checkpoint Utama",
         mode: "synth",
-        synthPreset: "fanfare",
         audioUrl: "",
-        ttsText: ""
+        ttsText: "",
+        synthPreset: "fanfare"
       },
       {
         qrCode: "QR-AUDIO-03",
         title: "Pos 3: Ambient Eksplorasi Zona",
         mode: "synth",
-        synthPreset: "ambient",
         audioUrl: "",
-        ttsText: ""
+        ttsText: "",
+        synthPreset: "ambient"
       },
       {
         qrCode: "QR-NARASI-ID",
         title: "Pos 4: Narasi Suara Bahasa Indonesia",
         mode: "tts",
-        synthPreset: "chime",
         audioUrl: "",
-        ttsText: "Kode QR keempat berhasil dipindai. Sistem sedang memutar penjelasan audio ini hingga selesai sebelum menerima kode QR berikutnya."
+        ttsText: "Kode QR keempat berhasil dipindai. Sistem sedang memutar penjelasan audio ini hingga selesai sebelum menerima kode QR berikutnya.",
+        synthPreset: "chime"
       }
     ];
 
     // =========================================================================
     // 2. APPLICATION STATE
     // =========================================================================
-    let qrMappings = [];
+    let qrMappings = JSON.parse(JSON.stringify(INITIAL_QR_MAPPINGS));
     let isPlayingAudio = false; // KUNCI UTAMA: true selama audio sedang berjalan
     let currentQrCode = null;
     let lastCompletedQrCode = null;
@@ -564,9 +716,24 @@
     const btnBackToScanner = document.getElementById("btnBackToScanner");
     const btnCloseAdminPanel = document.getElementById("btnCloseAdminPanel");
     const chkPortableQrMode = document.getElementById("chkPortableQrMode");
+    const selectQrFormatMode = document.getElementById("selectQrFormatMode");
+    const inputBaseWebUrl = document.getElementById("inputBaseWebUrl");
+    const btnPlayerStop = document.getElementById("btnPlayerStop");
+    const btnStopPlaybackOverlay = document.getElementById("btnStopPlaybackOverlay");
+    const autoplayBanner = document.getElementById("autoplayBanner");
+    const btnAutoplayTrigger = document.getElementById("btnAutoplayTrigger");
+    const autoplayTrackTitle = document.getElementById("autoplayTrackTitle");
+    const iconCameraOffState = document.getElementById("iconCameraOffState");
+    const iconCameraOnState = document.getElementById("iconCameraOnState");
     const btnExportGithubConfig = document.getElementById("btnExportGithubConfig");
     const qrPreviewSubHint = document.getElementById("qrPreviewSubHint");
     const btnDownloadQr = document.getElementById("btnDownloadQr");
+    const overlayEqContainer = document.getElementById("overlayEqContainer");
+    const overlayTapIconContainer = document.getElementById("overlayTapIconContainer");
+    const overlayBadgeStatus = document.getElementById("overlayBadgeStatus");
+    const overlayHintText = document.getElementById("overlayHintText");
+    const btnOverlayTapToPlay = document.getElementById("btnOverlayTapToPlay");
+    const btnPlayerReplay = document.getElementById("btnPlayerReplay");
 
     let isAdminUnlocked = false;
     let cheatKeyBuffer = "";
@@ -574,6 +741,8 @@
     let logoTapTimer = null;
     let currentPreviewItem = null;
     let isAudioUnlocked = false;
+    let pendingAutoplayHandler = null;
+    let lastCompletedTime = 0;
 
     // Pastikan opsi abaikan QR sama beruntun selalu false
     if (chkIgnoreDuplicate) {
@@ -585,38 +754,305 @@
     // =========================================================================
     // 3. STORAGE, GITHUB URL RESOLVER & INITIALIZATION
     // =========================================================================
+    const DEFAULT_GITHUB_PAGES_BASE = "https://rifkiindrazakaria.github.io/CeritaRakyat/";
+    const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/RifkiIndraZakaria/CeritaRakyat/main/";
+
     /**
-     * Membuat payload QR yang sangat ringkas agar titik-titik QR tidak rapat
-     * sehingga sangat cepat dibaca oleh kamera HP dari layar maupun cetakan.
+     * Mendapatkan Base URL direktori web app secara akurat (menangani tanpa trailing slash & subdirektori)
      */
-    function buildQrPayloadText(item) {
-      const usePortable = chkPortableQrMode ? chkPortableQrMode.checked : false;
-      if (!usePortable) {
-        return item.qrCode;
+    function getRepositoryBaseUrl() {
+      if (typeof window !== "undefined" && window.location && (window.location.protocol === "http:" || window.location.protocol === "https:")) {
+        // Jika sedang dites di localhost / 127.0.0.1, gunakan URL GitHub Pages agar QR code dapat discan & dibuka di HP fisik!
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+          return DEFAULT_GITHUB_PAGES_BASE;
+        }
+        let path = window.location.pathname;
+        if (/\.[a-zA-Z0-9]+$/i.test(path)) {
+          path = path.replace(/\/[^/]*$/, "/");
+        } else if (!path.endsWith("/")) {
+          path += "/";
+        }
+        return window.location.origin + path;
       }
-
-      // Jika mode URL dan audioUrl sudah berupa path pendek atau URL langsung,
-      // gunakan format super ringkas: QRA|<mode>|<judul>|<target>
-      const target =
-        item.mode === "url"
-          ? (item.audioUrl || "")
-          : item.mode === "tts"
-          ? (item.ttsText || item.title || "")
-          : (item.synthPreset || "chime");
-
-      const shortTitle = (item.title || "Audio").slice(0, 32).replace(/\|/g, "-");
-      return `QRA|${item.mode}|${shortTitle}|${target}`;
+      return DEFAULT_GITHUB_PAGES_BASE;
     }
 
     /**
-     * Mem-parsing isi QR apakah berupa format kompak QRA|..., JSON QR Mandiri,
-     * URL/Path Audio langsung, atau ID QR biasa.
+     * Mendapatkan URL langsung ke stream GitHub Raw untuk audio tertentu
+     */
+    function getGithubRawAudioUrl(cleanAudioPath) {
+      const p = (cleanAudioPath || "").replace(/^\.?\//, "");
+      return `${GITHUB_RAW_BASE}${p}`;
+    }
+
+    /**
+     * Menyelesaikan URL audio GitHub:
+     * - Mengubah link halaman web GitHub (blob) menjadi raw.githubusercontent.com
+     * - Mengubah relative path (./audio/1.mp3) menjadi URL lengkap yang valid di GitHub Pages
+     * - Mendukung link raw GitHub langsung dan URL audio eksternal
+     * - Menangani branch refs/heads/main dan normalisasi nomor track
+     */
+    function resolveGithubAudioUrl(rawUrl) {
+      if (!rawUrl || typeof rawUrl !== "string") return "";
+      let url = rawUrl.trim();
+
+      // 1. Konversi GitHub Blob URL (halaman HTML) ke Raw Audio URL
+      const blobMatch = url.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(?:refs\/heads\/)?([^/]+)\/(.+)$/i);
+      if (blobMatch) {
+        const [, user, repo, branch, path] = blobMatch;
+        return `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
+      }
+
+      // 2. Konversi GitHub Raw redirect URL
+      const rawMatch = url.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/raw\/(?:refs\/heads\/)?([^/]+)\/(.+)$/i);
+      if (rawMatch) {
+        const [, user, repo, branch, path] = rawMatch;
+        return `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${path}`;
+      }
+
+      // 3. Jika sudah merupakan URL absolut (http/https), data URI, atau blob URI
+      if (/^(?:https?:\/\/|data:|blob:)/i.test(url)) {
+        return url;
+      }
+
+      // 4. Tangani path relatif (mis. ./audio/1.mp3, audio/1.mp3, 1.mp3, 1, cerita-01)
+      let cleanPath = url.replace(/^\.?\//, "");
+      if (/^\d+$/.test(cleanPath)) {
+        cleanPath = `audio/${cleanPath}.mp3`;
+      } else if (/^cerita-0*(\d+)$/i.test(cleanPath)) {
+        cleanPath = `audio/${cleanPath.replace(/^cerita-0*/i, "")}.mp3`;
+      } else if (/^\d+\.mp3$/i.test(cleanPath)) {
+        cleanPath = `audio/${cleanPath}`;
+      } else if (!cleanPath.startsWith("audio/") && /\.(mp3|wav|ogg|m4a|aac)$/i.test(cleanPath)) {
+        cleanPath = `audio/${cleanPath}`;
+      }
+
+      // Jika berjalan di web server / GitHub Pages, resolve terhadap Base URL repositori
+      if (typeof window !== "undefined" && window.location && (window.location.protocol === "http:" || window.location.protocol === "https:")) {
+        try {
+          const repoBase = getRepositoryBaseUrl();
+          return new URL(cleanPath, repoBase).href;
+        } catch (e) {}
+      }
+
+      // Fallback jika dibuka via file:/// atau offline
+      return `${GITHUB_RAW_BASE}${cleanPath}`;
+    }
+
+    /**
+     * Mendapatkan Base Web URL untuk pembuatan kode QR Link Web
+     */
+    function getSelectedBaseWebUrl() {
+      const inputElem = document.getElementById("inputBaseWebUrl") || (typeof inputBaseWebUrl !== "undefined" ? inputBaseWebUrl : null);
+      if (inputElem && inputElem.value && inputElem.value.trim()) {
+        let val = inputElem.value.trim();
+        if (!val.endsWith("/")) val += "/";
+        return val;
+      }
+      return getRepositoryBaseUrl();
+    }
+
+    /**
+     * Membuat isi payload QR berdasarkan mode pilihan:
+     * - web_url: URL lengkap (misal https://.../?qr=1) agar kamera bawaan HP langsung membuka web & memutar audio
+     * - id_only: Kode ID saja (misal "1" atau "CERITA-01") untuk pemindai di dalam web
+     * - portable: Payload kompak QRA|...
+     */
+    function buildQrPayloadText(item) {
+      const selectElem = document.getElementById("selectQrFormatMode") || (typeof selectQrFormatMode !== "undefined" ? selectQrFormatMode : null);
+      const mode = selectElem ? selectElem.value : "web_url";
+
+      if (mode === "web_url") {
+        const baseUrl = getSelectedBaseWebUrl();
+        let url = `${baseUrl}?qr=${encodeURIComponent(item.qrCode)}`;
+        // Jika custom item (bukan 1-10 bawaan), sertakan parameter audio & title agar HP lain langsung memutar audio
+        const isBuiltIn = /^(?:[1-9]|10|tes)$/.test(item.qrCode);
+        if (!isBuiltIn) {
+          if (item.audioUrl && item.mode === "url") {
+            url += `&audio=${encodeURIComponent(item.audioUrl)}`;
+          }
+          if (item.title) {
+            url += `&title=${encodeURIComponent(item.title)}`;
+          }
+        }
+        return url;
+      }
+
+      if (mode === "portable") {
+        const target =
+          item.mode === "url"
+            ? (item.audioUrl || "")
+            : item.mode === "tts"
+            ? (item.ttsText || item.title || "")
+            : (item.synthPreset || "chime");
+
+        const shortTitle = (item.title || "Audio").slice(0, 32).replace(/\|/g, "-");
+        return `QRA|${item.mode}|${shortTitle}|${target}`;
+      }
+
+      return item.qrCode;
+    }
+
+    /**
+     * Mencari item pemetaan berdasarkan kode ID, alias, angka, atau path audio
+     */
+    function findMappingItem(key) {
+      if (!key) return null;
+      const k = String(key).trim().toLowerCase();
+
+      // 1. Exact match pada qrCode
+      let match = qrMappings.find((m) => m.qrCode && m.qrCode.toLowerCase() === k);
+      if (match) return match;
+
+      // 2. Match pada audioUrl
+      match = qrMappings.find(
+        (m) =>
+          m.audioUrl &&
+          (m.audioUrl.toLowerCase() === k ||
+            m.audioUrl.toLowerCase().endsWith("/" + k) ||
+            m.audioUrl.toLowerCase().endsWith("/" + k + ".mp3"))
+      );
+      if (match) return match;
+
+      // 3. Match angka normalisasi (mis. cerita-01, cerita-1, qr-01, 01 -> matches 1)
+      const numMatch = k.match(/\b0*(\d+)\b/);
+      if (numMatch) {
+        const num = numMatch[1];
+        match = qrMappings.find(
+          (m) =>
+            m.qrCode &&
+            (m.qrCode.toLowerCase() === num ||
+              m.qrCode.toLowerCase() === "cerita-" + num ||
+              m.qrCode.toLowerCase() === "cerita-" + num.padStart(2, "0") ||
+              m.qrCode.toLowerCase() === "qr-audio-" + num.padStart(2, "0") ||
+              (m.audioUrl && m.audioUrl.toLowerCase().includes("/" + num + ".mp3")))
+        );
+        if (match) return match;
+      }
+
+      return null;
+    }
+
+    /**
+     * Mem-parsing isi QR dari berbagai sumber (Web Link URL, QRA Compact, JSON Portable, ID biasa, Audio URL langsung)
      */
     function parseScannedQrPayload(rawText) {
       const code = (rawText || "").trim();
       if (!code) return null;
 
-      // 0. Cek format kompak QRA|<mode>|<judul>|<target>
+      // 0. Cek apakah berupa Web Link URL (misal scan QR URL dari HP lain)
+      if (/^https?:\/\//i.test(code)) {
+        try {
+          const parsedUrl = new URL(code);
+          const audioParam = parsedUrl.searchParams.get("audio");
+          const qrParam =
+            parsedUrl.searchParams.get("qr") ||
+            parsedUrl.searchParams.get("play") ||
+            parsedUrl.searchParams.get("id") ||
+            parsedUrl.searchParams.get("story");
+          const titleParam = parsedUrl.searchParams.get("title");
+
+          if (qrParam) {
+            const found = findMappingItem(qrParam);
+            if (found) {
+              return Object.assign({}, found, {
+                title: titleParam ? decodeURIComponent(titleParam) : found.title,
+                audioUrl: audioParam ? decodeURIComponent(audioParam) : found.audioUrl
+              });
+            }
+
+            if (audioParam) {
+              return {
+                qrCode: qrParam,
+                title: titleParam ? decodeURIComponent(titleParam) : `Audio: ${qrParam}`,
+                mode: "url",
+                audioUrl: decodeURIComponent(audioParam),
+                ttsText: "",
+                synthPreset: "chime"
+              };
+            }
+
+            if (/^\d+$/.test(qrParam) || /\.(mp3|wav|ogg|m4a|aac)$/i.test(qrParam)) {
+              const num = qrParam.replace(/\.(mp3|wav|ogg|m4a|aac)$/i, "");
+              return {
+                qrCode: qrParam,
+                title: titleParam ? decodeURIComponent(titleParam) : `Cerita Bagian ${num} — Suling dan Burung`,
+                mode: "url",
+                audioUrl: `./audio/${num}.mp3`,
+                ttsText: "",
+                synthPreset: "chime"
+              };
+            }
+          }
+
+          if (audioParam) {
+            const decodedAudio = decodeURIComponent(audioParam);
+            const foundByAudio = findMappingItem(decodedAudio);
+            if (foundByAudio) {
+              return Object.assign({}, foundByAudio, {
+                title: titleParam ? decodeURIComponent(titleParam) : foundByAudio.title
+              });
+            }
+            return {
+              qrCode: decodedAudio,
+              title: titleParam ? decodeURIComponent(titleParam) : "Audio GitHub",
+              mode: "url",
+              audioUrl: decodedAudio,
+              ttsText: "",
+              synthPreset: "chime"
+            };
+          }
+
+          // Cek parameter hash (misal #qr=1 atau #1 atau #/2)
+          if (parsedUrl.hash) {
+            const rawHash = parsedUrl.hash.replace(/^#\/?/, "").trim();
+            if (rawHash) {
+              const hashParams = new URLSearchParams(rawHash);
+              const hashQr =
+                hashParams.get("qr") ||
+                hashParams.get("play") ||
+                hashParams.get("audio") ||
+                hashParams.get("id") ||
+                hashParams.get("story");
+              const targetKey = hashQr || rawHash;
+              const foundInHash = findMappingItem(targetKey);
+              if (foundInHash) return foundInHash;
+              if (/^\d+$/.test(targetKey)) {
+                return {
+                  qrCode: targetKey,
+                  title: `Cerita Bagian ${targetKey} — Suling dan Burung`,
+                  mode: "url",
+                  audioUrl: `./audio/${targetKey}.mp3`,
+                  ttsText: "",
+                  synthPreset: "chime"
+                };
+              }
+            }
+          }
+
+          // Cek query string tanpa key (misal ?1 atau ?10)
+          const rawSearch = parsedUrl.search.replace(/^\?/, "").trim();
+          if (/^\d+$/.test(rawSearch)) {
+            const foundNoKey = findMappingItem(rawSearch);
+            if (foundNoKey) return foundNoKey;
+          }
+
+          const pathname = parsedUrl.pathname.toLowerCase();
+          if (/\.(mp3|wav|ogg|m4a|aac)$/i.test(pathname)) {
+            const cleanName = pathname.split("/").pop().split(".")[0];
+            return {
+              qrCode: code,
+              title: titleParam ? decodeURIComponent(titleParam) : `Audio: ${decodeURIComponent(cleanName)}`,
+              mode: "url",
+              audioUrl: code,
+              ttsText: "",
+              synthPreset: "chime"
+            };
+          }
+        } catch (e) {}
+      }
+
+      // 1. Cek format kompak QRA|<mode>|<judul>|<target>
       if (code.startsWith("QRA|")) {
         const parts = code.split("|");
         if (parts.length >= 4) {
@@ -634,7 +1070,7 @@
         }
       }
 
-      // 1. Cek apakah QR berformat JSON Mandiri (kompatibilitas mundur)
+      // 2. Cek apakah QR berformat JSON Mandiri
       if (code.startsWith("{") && code.endsWith("}")) {
         try {
           const data = JSON.parse(code);
@@ -653,30 +1089,33 @@
         } catch (e) {}
       }
 
-      // 2. Cek apakah QR memiliki query parameter ?qra=... atau ?audio=... atau ?qr=...
-      if (/^https?:\/\//i.test(code)) {
-        try {
-          const parsedUrl = new URL(code);
-          const audioParam = parsedUrl.searchParams.get("audio");
-          const qrParam = parsedUrl.searchParams.get("qr");
-          const titleParam = parsedUrl.searchParams.get("title");
-          if (audioParam) {
-            return {
-              qrCode: audioParam,
-              title: titleParam || "Audio GitHub",
-              mode: "url",
-              audioUrl: audioParam,
-              ttsText: "",
-              synthPreset: "chime"
-            };
-          }
-          if (qrParam) {
-            const foundByParam = qrMappings.find(
-              (m) => m.qrCode.toLowerCase() === qrParam.toLowerCase()
-            );
-            if (foundByParam) return foundByParam;
-          }
-        } catch (e) {}
+      // 3. Cek di daftar mapping yang sudah ada
+      const foundInList = findMappingItem(code);
+      if (foundInList) return foundInList;
+
+      // 4. Cek path file audio langsung
+      if (/\.(mp3|wav|ogg|m4a|aac)$/i.test(code)) {
+        const cleanName = code.split("/").pop().replace(/\.[^.]+$/, "");
+        return {
+          qrCode: code,
+          title: `Audio: ${cleanName}`,
+          mode: "url",
+          audioUrl: code.startsWith("./") || code.startsWith("audio/") ? code : `./audio/${code}`,
+          ttsText: "",
+          synthPreset: "chime"
+        };
+      }
+
+      // 5. Cek jika kode adalah angka tunggal (1 sampai 10)
+      if (/^\d+$/.test(code)) {
+        return {
+          qrCode: code,
+          title: `Cerita Bagian ${code} — Suling dan Burung`,
+          mode: "url",
+          audioUrl: `./audio/${code}.mp3`,
+          ttsText: "",
+          synthPreset: "chime"
+        };
       }
 
       return null;
@@ -713,15 +1152,13 @@
         // Abaikan jika file qr-mappings.json belum dibuat di repo GitHub
       }
 
-      // 2. Gabungkan dengan penyimpanan lokal perangkat ini (jika ada tambahan di perangkat ini)
+      // 2. Gabungkan HANYA pemetaan kustom lokal yang berbeda dari bawaan
       try {
-        const saved = localStorage.getItem("qr_audio_mappings_v1");
-        if (saved) {
-          const parsed = JSON.parse(saved);
+        const customSaved = localStorage.getItem("qr_audio_custom_mappings_v2");
+        if (customSaved) {
+          const parsed = JSON.parse(customSaved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            qrMappings = mergeMappingsList(baseMappings, parsed);
-            renderMappingUI();
-            return;
+            baseMappings = mergeMappingsList(baseMappings, parsed);
           }
         }
       } catch (e) {}
@@ -732,7 +1169,7 @@
 
     function saveMappings() {
       try {
-        localStorage.setItem("qr_audio_mappings_v1", JSON.stringify(qrMappings));
+        localStorage.setItem("qr_audio_custom_mappings_v2", JSON.stringify(qrMappings));
       } catch (e) {}
       renderMappingUI();
     }
@@ -781,76 +1218,178 @@
           }
         }
       } catch (e) {}
-
-      if (!isAudioUnlocked && htmlAudioPlayer && !isPlayingAudio) {
-        try {
-          // Putar silent WAV sangat pendek untuk membuka izin autoplay pada elemen <audio> di iOS/Android
-          const silentWav = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
-          htmlAudioPlayer.muted = true;
-          htmlAudioPlayer.src = silentWav;
-          const p = htmlAudioPlayer.play();
-          if (p && typeof p.then === "function") {
-            p.then(() => {
-              htmlAudioPlayer.pause();
-              htmlAudioPlayer.currentTime = 0;
-              htmlAudioPlayer.muted = false;
-              htmlAudioPlayer.removeAttribute("src");
-              isAudioUnlocked = true;
-            }).catch(() => {
-              htmlAudioPlayer.muted = false;
-            });
-          } else {
-            htmlAudioPlayer.muted = false;
-            isAudioUnlocked = true;
-          }
-        } catch (e) {
-          htmlAudioPlayer.muted = false;
-        }
-      }
     }
 
     // =========================================================================
     // 4. CORE QR SCAN LOCK & AUDIO PLAYBACK ENGINE
     // =========================================================================
-    function setScannerLockedState(locked, trackInfo = null) {
+    function showAutoplayPrompt(mappingItem, historyId) {
+      if (autoplayTrackTitle) {
+        autoplayTrackTitle.textContent = mappingItem ? mappingItem.title : "Cerita Rakyat";
+      }
+      if (autoplayBanner) {
+        autoplayBanner.classList.remove("hidden");
+      }
+
+      const triggerPlayback = () => {
+        hideAutoplayPrompt();
+        unlockAudioEngine();
+        htmlAudioPlayer.play().then(() => {
+          setScannerLockedState(true, mappingItem || { title: nowPlayingTitle.textContent, qrCode: currentQrCode }, false);
+          showToast(`Memutar: ${mappingItem ? mappingItem.title : 'Audio'}`, "success");
+        }).catch((err) => {
+          console.warn("Autoplay retry error:", err);
+          showToast("Gagal memulai audio. Periksa izin audio peramban.", "warn");
+        });
+      };
+
+      pendingAutoplayHandler = triggerPlayback;
+
+      if (btnAutoplayTrigger) btnAutoplayTrigger.onclick = triggerPlayback;
+      if (btnOverlayTapToPlay) btnOverlayTapToPlay.onclick = triggerPlayback;
+      if (overlayTapIconContainer) overlayTapIconContainer.onclick = triggerPlayback;
+
+      // Sentuhan di mana pun pada layar akan memicu pemutaran
+      const onWindowTapOnce = (e) => {
+        if (e.target && (e.target.closest("#btnStopPlaybackOverlay") || e.target.closest("#btnPlayerStop"))) return;
+        window.removeEventListener("pointerdown", onWindowTapOnce);
+        if (pendingAutoplayHandler) triggerPlayback();
+      };
+      window.addEventListener("pointerdown", onWindowTapOnce, { once: true });
+    }
+
+    function hideAutoplayPrompt() {
+      if (autoplayBanner) autoplayBanner.classList.add("hidden");
+      if (btnOverlayTapToPlay) btnOverlayTapToPlay.classList.add("hidden");
+      if (overlayTapIconContainer) overlayTapIconContainer.classList.add("hidden");
+      pendingAutoplayHandler = null;
+    }
+
+    function setScannerLockedState(locked, trackInfo = null, isWaitingUserGesture = false) {
       isPlayingAudio = locked;
 
       if (locked && trackInfo) {
-        statusDot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0";
-        statusBadgeText.textContent = "Memutar Audio";
-        statusBadgeText.className = "text-[11px] font-semibold text-amber-300 truncate";
         lockIndicator.classList.remove("hidden");
         playingLockOverlay.classList.remove("hidden");
         overlayTrackTitle.textContent = trackInfo.title;
         overlayQrValue.textContent = `QR: ${trackInfo.qrCode}`;
-
-        playerStatePill.textContent = "Diputar";
-        playerStatePill.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30";
         nowPlayingTitle.textContent = trackInfo.title;
-        nowPlayingType.textContent = trackInfo.modeLabel;
+        nowPlayingType.textContent = trackInfo.modeLabel || "File Audio";
         nowPlayingQrCode.textContent = trackInfo.qrCode;
+        if (btnPlayerStop) btnPlayerStop.classList.remove("hidden");
+        if (btnPlayerReplay) btnPlayerReplay.classList.add("hidden");
         btnForceStopAudio.disabled = false;
+
+        if (isWaitingUserGesture) {
+          // Menunggu interaksi sentuhan dari pengguna (Autoplay restriction)
+          statusDot.className = "w-2 h-2 rounded-full bg-amber-400 shrink-0";
+          statusBadgeText.textContent = "Ketuk untuk Memutar";
+          statusBadgeText.className = "text-[11px] font-semibold text-amber-300 truncate";
+          lockIndicator.textContent = "Siap Diputar";
+
+          playerStatePill.textContent = "Siap Diputar (Ketuk)";
+          playerStatePill.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30";
+
+          if (overlayEqContainer) overlayEqContainer.classList.add("hidden");
+          if (overlayTapIconContainer) overlayTapIconContainer.classList.remove("hidden");
+          if (overlayBadgeStatus) {
+            overlayBadgeStatus.textContent = "Audio Siap Diputar";
+            overlayBadgeStatus.className = "text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 mb-1.5";
+          }
+          if (overlayHintText) overlayHintText.textContent = "Sentuh layar atau tombol di bawah untuk mendengarkan audio.";
+          if (btnOverlayTapToPlay) btnOverlayTapToPlay.classList.remove("hidden");
+        } else {
+          // Audio sedang berjalan aktif
+          statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0";
+          statusBadgeText.textContent = "Memutar Audio";
+          statusBadgeText.className = "text-[11px] font-semibold text-emerald-300 truncate";
+          lockIndicator.textContent = "Terkunci";
+
+          playerStatePill.textContent = "Diputar";
+          playerStatePill.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+
+          if (overlayEqContainer) overlayEqContainer.classList.remove("hidden");
+          if (overlayTapIconContainer) overlayTapIconContainer.classList.add("hidden");
+          if (overlayBadgeStatus) {
+            overlayBadgeStatus.textContent = "Sedang Memutar Audio";
+            overlayBadgeStatus.className = "text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-1.5";
+          }
+          if (overlayHintText) overlayHintText.textContent = "Pemindai akan aktif kembali otomatis setelah audio selesai.";
+          if (btnOverlayTapToPlay) btnOverlayTapToPlay.classList.add("hidden");
+        }
       } else {
         statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0";
         statusBadgeText.textContent = "Siap Scan";
         statusBadgeText.className = "text-[11px] font-semibold text-emerald-400 truncate";
         lockIndicator.classList.add("hidden");
+        lockIndicator.textContent = "Terkunci";
         playingLockOverlay.classList.add("hidden");
+        if (btnOverlayTapToPlay) btnOverlayTapToPlay.classList.add("hidden");
+        if (overlayTapIconContainer) overlayTapIconContainer.classList.add("hidden");
 
         playerStatePill.textContent = "Siap Scan";
         playerStatePill.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
+        if (btnPlayerStop) btnPlayerStop.classList.add("hidden");
         btnForceStopAudio.disabled = true;
       }
     }
 
     function handleDetectedQrCode(rawQrValue, sourceLabel = "Kamera") {
-      const code = (rawQrValue || "").trim();
-      if (!code) return;
+      if (!rawQrValue) return;
 
       const now = Date.now();
       // Cooldown singkat 650ms agar frame kamera yang berurutan tidak memicu pemanggilan ganda pada milidetik yang sama
       if (now - lastDetectedTime < 650) return;
       lastDetectedTime = now;
+
+      let matched = null;
+      let code = "";
+
+      if (typeof rawQrValue === "object" && rawQrValue !== null && rawQrValue.qrCode) {
+        matched = rawQrValue;
+        code = matched.qrCode;
+      } else {
+        code = String(rawQrValue).trim();
+        if (!code) return;
+
+        // Cheat Code melalui Scan QR
+        if (code.toUpperCase() === "CHEAT-ADMIN-QR") {
+          unlockAdminMenu();
+          return;
+        }
+
+        // 1. Parsing isi QR dengan parser cerdas (mendukung link URL, format QRA, JSON, atau ID langsung)
+        matched = parseScannedQrPayload(code);
+
+        // 2. Jika belum cocok, cari berdasarkan mapping ID atau Audio URL
+        if (!matched) {
+          matched = findMappingItem(code);
+        }
+      }
+
+      // Pastikan selalu false sesuai spesifikasi
+      if (chkIgnoreDuplicate) chkIgnoreDuplicate.checked = false;
+
+      // 3. Fallback jika tidak ditemukan
+      if (!matched) {
+        showToast(`QR terbaca: "${code.slice(0, 24)}", memutar audio default.`, "info");
+        matched = {
+          qrCode: code,
+          title: `Audio: ${code.slice(0, 28)}`,
+          mode: "synth",
+          synthPreset: "chime"
+        };
+      }
+
+      // Hindari loop pemindaian kamera berulang pada QR yang baru saja selesai diputar
+      if (
+        sourceLabel === "Kamera" &&
+        lastCompletedQrCode &&
+        matched.qrCode === lastCompletedQrCode &&
+        now - lastCompletedTime < 3500
+      ) {
+        return;
+      }
 
       // Efek kilatan hijau tanda QR berhasil terbaca oleh kamera
       if (scanSuccessFlash) {
@@ -858,55 +1397,9 @@
         setTimeout(() => scanSuccessFlash.classList.add("hidden"), 280);
       }
 
-      // Cheat Code melalui Scan QR
-      if (code.toUpperCase() === "CHEAT-ADMIN-QR") {
-        unlockAdminMenu();
-        return;
-      }
-
-      // Pastikan selalu false sesuai spesifikasi
-      chkIgnoreDuplicate.checked = false;
-
       if (isPlayingAudio) {
         showToast(`Tunggu audio "${nowPlayingTitle.textContent}" selesai.`, "warn");
         return;
-      }
-
-      // 1. Cek apakah QR yang dipindai adalah QR Mandiri (QRA|..., JSON, atau Query Param)
-      let matched = parseScannedQrPayload(code);
-
-      // 2. Jika bukan QR Mandiri, cari di daftar pemetaan (qrMappings) berdasarkan ID atau URL
-      if (!matched) {
-        matched = qrMappings.find(
-          (item) =>
-            item.qrCode.toLowerCase() === code.toLowerCase() ||
-            (item.audioUrl && item.audioUrl.toLowerCase() === code.toLowerCase())
-        );
-      }
-
-      // 3. Jika tidak ada di daftar, cek apakah isi QR adalah URL/Path file audio GitHub langsung
-      if (!matched) {
-        const isDirectAudioUrl =
-          /^https?:\/\/.+\.(mp3|wav|ogg|m4a|aac)(\?.*)?$/i.test(code) ||
-          /^https?:\/\/github\.com\/.+\/(?:blob|raw)\/.+\.(mp3|wav|ogg|m4a|aac)(\?.*)?$/i.test(code) ||
-          /^\.?\/?(?:audio\/)?.+\.(mp3|wav|ogg|m4a|aac)$/i.test(code);
-
-        if (isDirectAudioUrl) {
-          const cleanName = code.split("/").pop().split("?")[0] || "Audio QR";
-          matched = {
-            qrCode: code,
-            title: `Audio: ${decodeURIComponent(cleanName)}`,
-            mode: "url",
-            audioUrl: code
-          };
-        } else {
-          matched = {
-            qrCode: code,
-            title: `Audio: ${code.slice(0, 28)}`,
-            mode: "synth",
-            synthPreset: "chime"
-          };
-        }
       }
 
       showToast(`QR Terdeteksi: ${matched.title}`, "success");
@@ -941,7 +1434,7 @@
       scanHistory.unshift(historyEntry);
 
       if (mappingItem.mode === "url" && mappingItem.audioUrl) {
-        playUrlAudio(mappingItem.audioUrl, historyEntry.id);
+        playUrlAudio(mappingItem.audioUrl, historyEntry.id, mappingItem);
       } else if (mappingItem.mode === "tts") {
         playTtsAudio(mappingItem.ttsText || mappingItem.title, historyEntry.id);
       } else {
@@ -951,6 +1444,7 @@
 
     function completeCurrentAudio(historyId, statusText = "Selesai") {
       lastCompletedQrCode = currentQrCode;
+      lastCompletedTime = Date.now();
       currentQrCode = null;
       audioProgressBar.style.width = "100%";
 
@@ -960,10 +1454,20 @@
       }
 
       setScannerLockedState(false);
+      if (btnPlayerReplay && lastCompletedQrCode) {
+        btnPlayerReplay.classList.remove("hidden");
+      }
     }
 
     function stopAllAudioInternal(resetUi = true) {
+      hideAutoplayPrompt();
+
       try {
+        htmlAudioPlayer.onloadedmetadata = null;
+        htmlAudioPlayer.ontimeupdate = null;
+        htmlAudioPlayer.onended = null;
+        htmlAudioPlayer.onerror = null;
+        htmlAudioPlayer.onplay = null;
         htmlAudioPlayer.pause();
         htmlAudioPlayer.currentTime = 0;
         htmlAudioPlayer.removeAttribute("src");
@@ -1000,11 +1504,30 @@
     }
 
     // Volume diatur penuh oleh perangkat pengguna (1.0 pada web player)
-    function playUrlAudio(url, historyId) {
+    function playUrlAudio(url, historyId, mappingItem = null) {
+      hideAutoplayPrompt();
       const resolvedUrl = resolveGithubAudioUrl(url);
+
+      if (!resolvedUrl) {
+        showToast("URL file audio tidak valid.", "warn");
+        completeCurrentAudio(historyId, "Gagal");
+        return;
+      }
+
+      // Tentukan fallback GitHub Raw jika resolvedUrl adalah GitHub Pages atau link lokal
+      let cleanAudioRel = "";
+      if (mappingItem && mappingItem.audioUrl) {
+        cleanAudioRel = mappingItem.audioUrl;
+      } else if (/\.(mp3|wav|ogg|m4a|aac)/i.test(url)) {
+        cleanAudioRel = url;
+      }
+      const rawFallbackUrl = cleanAudioRel ? getGithubRawAudioUrl(cleanAudioRel) : "";
+      let isFallbackAttempted = false;
+
+      // Hapus crossOrigin agar audio streaming dari GitHub tidak diblokir kebijakan CORS
+      htmlAudioPlayer.removeAttribute("crossOrigin");
       htmlAudioPlayer.muted = false;
       htmlAudioPlayer.volume = 1.0;
-      htmlAudioPlayer.crossOrigin = "anonymous";
       htmlAudioPlayer.src = resolvedUrl;
 
       htmlAudioPlayer.onloadedmetadata = () => {
@@ -1020,29 +1543,51 @@
         audioProgressBar.style.width = `${pct}%`;
       };
 
+      htmlAudioPlayer.onplay = () => {
+        setScannerLockedState(true, mappingItem || { title: nowPlayingTitle.textContent, qrCode: currentQrCode }, false);
+        hideAutoplayPrompt();
+      };
+
       htmlAudioPlayer.onended = () => {
         completeCurrentAudio(historyId, "Selesai");
       };
 
       htmlAudioPlayer.onerror = () => {
-        // Coba ulang tanpa crossOrigin jika server memblokir header CORS
-        if (htmlAudioPlayer.crossOrigin) {
-          htmlAudioPlayer.removeAttribute("crossOrigin");
-          htmlAudioPlayer.src = resolvedUrl;
-          htmlAudioPlayer.play().catch(() => {
-            showToast(`File audio tidak dapat dimuat (${url}), memutar nada cadangan.`, "warn");
-            playSynthSequence("chime", historyId);
-          });
+        if (!htmlAudioPlayer.src || htmlAudioPlayer.src === window.location.href) return;
+        if (!isFallbackAttempted && rawFallbackUrl && htmlAudioPlayer.src !== rawFallbackUrl) {
+          isFallbackAttempted = true;
+          console.warn(`Gagal memuat ${htmlAudioPlayer.src}, mencoba fallback GitHub Raw: ${rawFallbackUrl}`);
+          htmlAudioPlayer.src = rawFallbackUrl;
+          const retryPromise = htmlAudioPlayer.play();
+          if (retryPromise !== undefined) {
+            retryPromise.catch((err) => {
+              if (err.name === "NotAllowedError") {
+                setScannerLockedState(true, mappingItem || { title: nowPlayingTitle.textContent, qrCode: currentQrCode }, true);
+                showAutoplayPrompt(mappingItem || { title: nowPlayingTitle.textContent }, historyId);
+              }
+            });
+          }
           return;
         }
-        showToast(`File audio tidak ditemukan (${url}), memutar nada cadangan.`, "warn");
-        playSynthSequence("chime", historyId);
+        showToast(`File audio GitHub tidak dapat dimuat: ${htmlAudioPlayer.src}`, "warn");
+        completeCurrentAudio(historyId, "Gagal");
       };
 
-      htmlAudioPlayer.play().catch(() => {
-        showToast("Ketuk layar sekali jika peramban menahan pemutaran audio.", "warn");
-        playSynthSequence("chime", historyId);
-      });
+      const playPromise = htmlAudioPlayer.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          setScannerLockedState(true, mappingItem || { title: nowPlayingTitle.textContent, qrCode: currentQrCode }, false);
+        }).catch((err) => {
+          if (err.name === "NotAllowedError") {
+            // Diblokir oleh browser Autoplay policy (misal buka link QR di HP baru)
+            setScannerLockedState(true, mappingItem || { title: nowPlayingTitle.textContent, qrCode: currentQrCode }, true);
+            showAutoplayPrompt(mappingItem || { title: nowPlayingTitle.textContent }, historyId);
+            showToast("Ketuk layar untuk mendengarkan audio.", "info");
+          } else {
+            console.warn("Gagal memulai audio:", err);
+          }
+        });
+      }
     }
 
     function playTtsAudio(text, historyId) {
@@ -1238,6 +1783,13 @@
         if (btnToggleCameraLabel) {
           btnToggleCameraLabel.textContent = "Matikan Kamera";
         }
+        if (btnToggleCamera) {
+          btnToggleCamera.title = "Matikan Kamera";
+        }
+        if (iconCameraOffState && iconCameraOnState) {
+          iconCameraOffState.classList.add("hidden");
+          iconCameraOnState.classList.remove("hidden");
+        }
         if (scanEngineStatusText) {
           scanEngineStatusText.textContent = nativeBarcodeDetector
             ? "Memindai QR (Turbo)..."
@@ -1273,6 +1825,13 @@
         cameraPlaceholder.classList.remove("hidden");
         if (btnToggleCameraLabel) {
           btnToggleCameraLabel.textContent = "Mulai Kamera";
+        }
+        if (btnToggleCamera) {
+          btnToggleCamera.title = "Aktifkan Kamera";
+        }
+        if (iconCameraOffState && iconCameraOnState) {
+          iconCameraOffState.classList.remove("hidden");
+          iconCameraOnState.classList.add("hidden");
         }
       }
     }
@@ -1527,14 +2086,20 @@
       qrPreviewTitle.textContent = item.title;
 
       const payloadText = buildQrPayloadText(item);
-      const isPortable = chkPortableQrMode && chkPortableQrMode.checked;
+      const mode = selectQrFormatMode ? selectQrFormatMode.value : "web_url";
 
-      qrPreviewCodeText.textContent = `Isi QR: ${payloadText}`;
+      qrPreviewCodeText.textContent = mode === "web_url"
+        ? `URL: ${payloadText}`
+        : `Isi QR: ${payloadText}`;
 
       if (qrPreviewSubHint) {
-        qrPreviewSubHint.textContent = isPortable
-          ? "Mode Mandiri Aktif (Format Kompak QRA): Menyimpan sumber audio langsung di QR dengan kerapatan rendah agar tetap mudah dipindai kamera."
-          : "Mode Cepat (Direkomendasikan): Kode QR sangat renggang & langsung terdeteksi kamera. Gunakan 'Salin JSON GitHub' untuk sinkronisasi ke repo.";
+        if (mode === "web_url") {
+          qrPreviewSubHint.textContent = "Mode Link Web (Rekomendasi Lintas HP): Kode QR berupa link web. Saat discan menggunakan Kamera HP biasa (iPhone/Android/Google Lens), HP otomatis membuka website ini dan memutar audio.";
+        } else if (mode === "portable") {
+          qrPreviewSubHint.textContent = "Mode Mandiri (QRA): Menyimpan URL audio langsung di dalam QR.";
+        } else {
+          qrPreviewSubHint.textContent = "Mode ID Singkat: Hanya berisi ID teks. Cepat dan renggang, khusus pemindai di dalam web ini.";
+        }
       }
 
       if (typeof QRCode === "function") {
@@ -1544,7 +2109,7 @@
           height: 180,
           colorDark: "#000000",
           colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.L
+          correctLevel: QRCode.CorrectLevel.M
         });
       }
     }
@@ -1552,23 +2117,36 @@
     if (btnDownloadQr) {
       btnDownloadQr.addEventListener("click", () => {
         if (!currentPreviewItem || !qrCanvasRender) return;
-        const qrImg = qrCanvasRender.querySelector("img") || qrCanvasRender.querySelector("canvas");
-        if (!qrImg) {
+        const qrCanvas = qrCanvasRender.querySelector("canvas");
+        const qrImg = qrCanvasRender.querySelector("img");
+        const sourceElem = qrCanvas || qrImg;
+        if (!sourceElem) {
           showToast("Gambar QR belum siap.", "warn");
           return;
         }
 
-        // Buat canvas dengan quiet zone putih (margin 24px) agar saat diunduh/dicetak mudah dipindai
         const exportCanvas = document.createElement("canvas");
-        const size = 260;
-        const pad = 28;
+        const size = 320;
+        const pad = 24;
+        const textHeight = 56;
         exportCanvas.width = size;
-        exportCanvas.height = size;
+        exportCanvas.height = size + textHeight;
         const ctx = exportCanvas.getContext("2d");
+
         ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, size, size);
+        ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
         ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(qrImg, pad, pad, size - pad * 2, size - pad * 2);
+        ctx.drawImage(sourceElem, pad, pad, size - pad * 2, size - pad * 2);
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "bold 13px 'Plus Jakarta Sans', sans-serif";
+        ctx.textAlign = "center";
+        const titleText = (currentPreviewItem.title || "Cerita Rakyat").slice(0, 38);
+        ctx.fillText(titleText, size / 2, size + 16);
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = "11px 'IBM Plex Mono', monospace";
+        ctx.fillText(`ID: ${currentPreviewItem.qrCode} — Scan untuk Mendengar`, size / 2, size + 36);
 
         const link = document.createElement("a");
         const safeName = (currentPreviewItem.qrCode || "qr-audio").replace(/[^a-z0-9-_]/gi, "_");
@@ -1579,9 +2157,17 @@
       });
     }
 
-    if (chkPortableQrMode) {
-      chkPortableQrMode.addEventListener("change", () => {
+    if (selectQrFormatMode) {
+      selectQrFormatMode.addEventListener("change", () => {
         if (currentPreviewItem) {
+          renderQrCodePreview(currentPreviewItem);
+        }
+      });
+    }
+
+    if (inputBaseWebUrl) {
+      inputBaseWebUrl.addEventListener("input", () => {
+        if (currentPreviewItem && selectQrFormatMode && selectQrFormatMode.value === "web_url") {
           renderQrCodePreview(currentPreviewItem);
         }
       });
@@ -1590,18 +2176,28 @@
     if (btnExportGithubConfig) {
       btnExportGithubConfig.addEventListener("click", () => {
         const jsonText = JSON.stringify(qrMappings, null, 2);
-        const tempArea = document.createElement("textarea");
-        tempArea.value = jsonText;
-        document.body.appendChild(tempArea);
-        tempArea.select();
-        try {
-          document.execCommand("copy");
-          showToast("JSON disalin! Simpan ke qr-mappings.json atau INITIAL_QR_MAPPINGS di GitHub.", "success");
-        } catch (err) {
-          showToast("Gagal menyalin JSON secara otomatis.", "warn");
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(jsonText).then(() => {
+            showToast("JSON disalin! Simpan ke qr-mappings.json di repo GitHub.", "success");
+          }).catch(() => fallbackCopy(jsonText));
+        } else {
+          fallbackCopy(jsonText);
         }
-        tempArea.remove();
       });
+    }
+
+    function fallbackCopy(text) {
+      const tempArea = document.createElement("textarea");
+      tempArea.value = text;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand("copy");
+        showToast("JSON disalin! Simpan ke qr-mappings.json di repo GitHub.", "success");
+      } catch (err) {
+        showToast("Gagal menyalin JSON secara otomatis.", "warn");
+      }
+      tempArea.remove();
     }
 
     function renderMappingUI() {
@@ -1713,9 +2309,11 @@
     });
 
     btnResetDefaultMappings.addEventListener("click", () => {
+      localStorage.removeItem("qr_audio_mappings_v1");
+      localStorage.removeItem("qr_audio_custom_mappings_v2");
       qrMappings = JSON.parse(JSON.stringify(INITIAL_QR_MAPPINGS));
       saveMappings();
-      showToast("Pemetaan dikembalikan ke default.", "info");
+      showToast("Pemetaan dikembalikan ke default repositori GitHub.", "info");
     });
 
     btnStartCameraCenter.addEventListener("click", () => startCamera());
@@ -1736,18 +2334,76 @@
       }
     });
 
-    window.addEventListener("DOMContentLoaded", () => {
-      chkIgnoreDuplicate.checked = false;
-      loadMappings();
+    if (playingLockOverlay) {
+      playingLockOverlay.addEventListener("click", (e) => {
+        if (e.target && e.target.closest("#btnStopPlaybackOverlay")) return;
+        if (pendingAutoplayHandler) {
+          pendingAutoplayHandler();
+        }
+      });
+    }
 
-      // Cek apakah halaman dibuka dengan parameter URL langsung (?qr=... atau ?audio=...)
+    if (btnPlayerReplay) {
+      btnPlayerReplay.addEventListener("click", () => {
+        if (!lastCompletedQrCode) return;
+        const item = findMappingItem(lastCompletedQrCode) || parseScannedQrPayload(lastCompletedQrCode);
+        if (item) {
+          unlockAudioEngine();
+          startAudioForQr(item, "Putar Ulang");
+          showToast(`Memutar ulang: ${item.title}`, "info");
+        }
+      });
+    }
+
+    if (btnStopPlaybackOverlay) {
+      btnStopPlaybackOverlay.addEventListener("click", () => {
+        stopAllAudioInternal(true);
+        showToast("Audio dihentikan. Pemindai siap kembali.", "info");
+      });
+    }
+
+    if (btnPlayerStop) {
+      btnPlayerStop.addEventListener("click", () => {
+        stopAllAudioInternal(true);
+        showToast("Audio dihentikan.", "info");
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      if (chkIgnoreDuplicate) chkIgnoreDuplicate.checked = false;
+
+      // Inisialisasi inputBaseWebUrl
+      if (inputBaseWebUrl) {
+        inputBaseWebUrl.value = getSelectedBaseWebUrl();
+      }
+
       try {
-        const params = new URLSearchParams(window.location.search);
-        const qrParam = params.get("qr") || params.get("audio");
-        if (qrParam) {
+        await loadMappings();
+      } catch (err) {
+        console.warn("loadMappings error:", err);
+      }
+
+      // Cek apakah halaman dibuka dengan parameter URL langsung (?qr=... atau ?play=... atau #qr=...)
+      try {
+        const fullHref = window.location.href;
+        const matched = parseScannedQrPayload(fullHref);
+        if (matched) {
           setTimeout(() => {
-            handleDetectedQrCode(qrParam, "Link QR");
-          }, 400);
+            handleDetectedQrCode(matched, "Link Web QR");
+          }, 150);
+        } else {
+          const params = new URLSearchParams(window.location.search);
+          const qrParam =
+            params.get("qr") ||
+            params.get("play") ||
+            params.get("audio") ||
+            params.get("id") ||
+            params.get("story");
+          if (qrParam) {
+            setTimeout(() => {
+              handleDetectedQrCode(qrParam, "Link Web QR");
+            }, 150);
+          }
         }
       } catch (e) {}
     });

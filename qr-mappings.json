@@ -1,0 +1,122 @@
+[
+  {
+    "qrCode": "1",
+    "title": "Cerita Bagian 1 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/1.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "2",
+    "title": "Cerita Bagian 2 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/2.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "3",
+    "title": "Cerita Bagian 3 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/3.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "4",
+    "title": "Cerita Bagian 4 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/4.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "5",
+    "title": "Cerita Bagian 5 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/5.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "6",
+    "title": "Cerita Bagian 6 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/6.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "7",
+    "title": "Cerita Bagian 7 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/7.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "8",
+    "title": "Cerita Bagian 8 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/8.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "9",
+    "title": "Cerita Bagian 9 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/9.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "10",
+    "title": "Cerita Bagian 10 — Suling dan Burung",
+    "mode": "url",
+    "audioUrl": "./audio/10.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "tes",
+    "title": "Uji Coba Audio Singkat (Tes)",
+    "mode": "url",
+    "audioUrl": "./audio/tes.mp3",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "QR-AUDIO-01",
+    "title": "Pos 1: Sambutan & Pengantar (Chime)",
+    "mode": "synth",
+    "audioUrl": "",
+    "ttsText": "",
+    "synthPreset": "chime"
+  },
+  {
+    "qrCode": "QR-AUDIO-02",
+    "title": "Pos 2: Fanfare Checkpoint Utama",
+    "mode": "synth",
+    "audioUrl": "",
+    "ttsText": "",
+    "synthPreset": "fanfare"
+  },
+  {
+    "qrCode": "QR-AUDIO-03",
+    "title": "Pos 3: Ambient Eksplorasi Zona",
+    "mode": "synth",
+    "audioUrl": "",
+    "ttsText": "",
+    "synthPreset": "ambient"
+  },
+  {
+    "qrCode": "QR-NARASI-ID",
+    "title": "Pos 4: Narasi Suara Bahasa Indonesia",
+    "mode": "tts",
+    "audioUrl": "",
+    "ttsText": "Kode QR narasi berhasil dipindai. Sistem sedang memutar penjelasan audio ini hingga selesai sebelum menerima kode QR berikutnya.",
+    "synthPreset": "chime"
+  }
+]
