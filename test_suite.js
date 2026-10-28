@@ -145,7 +145,7 @@ console.log('✓ parseScannedQrPayload verified successfully');
 console.log('\n[TEST 5] buildQrPayloadText generator tests');
 const sampleItem = {
   qrCode: '1',
-  title: 'Cerita Bagian 1 — Suling dan Burung',
+  title: 'Halaman 1 - Legenda Kota Menara',
   mode: 'url',
   audioUrl: './audio/1.mp3'
 };
@@ -310,7 +310,7 @@ console.log('\n[TEST 8] Mobile Browser Autoplay Restriction Simulation');
 
   // Verify autoplay prompt is now visible with correct story title
   assert.strictEqual(autoplayPromptShown, true, 'Autoplay prompt must be shown when browser blocks autoplay');
-  assert(autoplayPromptTitle.includes('Cerita Bagian 1'), 'Autoplay prompt shows correct story title');
+  assert(autoplayPromptTitle.includes('Halaman 1'), 'Autoplay prompt shows correct story title');
 
   // User taps "Sentuh untuk Mendengarkan Audio":
   assert(typeof bannerClickHandler === 'function', 'Button click handler must be assigned');

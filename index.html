@@ -489,7 +489,7 @@
     const INITIAL_QR_MAPPINGS = [
       {
         qrCode: "1",
-        title: "Cerita Bagian 1 — Suling dan Burung",
+        title: "Halaman 1 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/1.mp3",
         ttsText: "",
@@ -497,7 +497,7 @@
       },
       {
         qrCode: "2",
-        title: "Cerita Bagian 2 — Suling dan Burung",
+        title: "Halaman 2 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/2.mp3",
         ttsText: "",
@@ -505,7 +505,7 @@
       },
       {
         qrCode: "3",
-        title: "Cerita Bagian 3 — Suling dan Burung",
+        title: "Halaman 3 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/3.mp3",
         ttsText: "",
@@ -513,7 +513,7 @@
       },
       {
         qrCode: "4",
-        title: "Cerita Bagian 4 — Suling dan Burung",
+        title: "Halaman 4 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/4.mp3",
         ttsText: "",
@@ -521,7 +521,7 @@
       },
       {
         qrCode: "5",
-        title: "Cerita Bagian 5 — Suling dan Burung",
+        title: "Halaman 5 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/5.mp3",
         ttsText: "",
@@ -529,7 +529,7 @@
       },
       {
         qrCode: "6",
-        title: "Cerita Bagian 6 — Suling dan Burung",
+        title: "Halaman 6 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/6.mp3",
         ttsText: "",
@@ -537,7 +537,7 @@
       },
       {
         qrCode: "7",
-        title: "Cerita Bagian 7 — Suling dan Burung",
+        title: "Halaman 7 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/7.mp3",
         ttsText: "",
@@ -545,7 +545,7 @@
       },
       {
         qrCode: "8",
-        title: "Cerita Bagian 8 — Suling dan Burung",
+        title: "Halaman 8 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/8.mp3",
         ttsText: "",
@@ -553,7 +553,7 @@
       },
       {
         qrCode: "9",
-        title: "Cerita Bagian 9 — Suling dan Burung",
+        title: "Halaman 9 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/9.mp3",
         ttsText: "",
@@ -561,7 +561,7 @@
       },
       {
         qrCode: "10",
-        title: "Cerita Bagian 10 — Suling dan Burung",
+        title: "Halaman 10 - Legenda Kota Menara",
         mode: "url",
         audioUrl: "./audio/10.mp3",
         ttsText: "",
@@ -924,6 +924,8 @@
             (m.qrCode.toLowerCase() === num ||
               m.qrCode.toLowerCase() === "cerita-" + num ||
               m.qrCode.toLowerCase() === "cerita-" + num.padStart(2, "0") ||
+              m.qrCode.toLowerCase() === "halaman-" + num ||
+              m.qrCode.toLowerCase() === "halaman-" + num.padStart(2, "0") ||
               m.qrCode.toLowerCase() === "qr-audio-" + num.padStart(2, "0") ||
               (m.audioUrl && m.audioUrl.toLowerCase().includes("/" + num + ".mp3")))
         );
@@ -949,7 +951,9 @@
             parsedUrl.searchParams.get("qr") ||
             parsedUrl.searchParams.get("play") ||
             parsedUrl.searchParams.get("id") ||
-            parsedUrl.searchParams.get("story");
+            parsedUrl.searchParams.get("story") ||
+            parsedUrl.searchParams.get("halaman") ||
+            parsedUrl.searchParams.get("page");
           const titleParam = parsedUrl.searchParams.get("title");
 
           if (qrParam) {
@@ -976,7 +980,7 @@
               const num = qrParam.replace(/\.(mp3|wav|ogg|m4a|aac)$/i, "");
               return {
                 qrCode: qrParam,
-                title: titleParam ? decodeURIComponent(titleParam) : `Cerita Bagian ${num} — Suling dan Burung`,
+                title: titleParam ? decodeURIComponent(titleParam) : `Halaman ${num} - Legenda Kota Menara`,
                 mode: "url",
                 audioUrl: `./audio/${num}.mp3`,
                 ttsText: "",
@@ -1013,14 +1017,16 @@
                 hashParams.get("play") ||
                 hashParams.get("audio") ||
                 hashParams.get("id") ||
-                hashParams.get("story");
+                hashParams.get("story") ||
+                hashParams.get("halaman") ||
+                hashParams.get("page");
               const targetKey = hashQr || rawHash;
               const foundInHash = findMappingItem(targetKey);
               if (foundInHash) return foundInHash;
               if (/^\d+$/.test(targetKey)) {
                 return {
                   qrCode: targetKey,
-                  title: `Cerita Bagian ${targetKey} — Suling dan Burung`,
+                  title: `Halaman ${targetKey} - Legenda Kota Menara`,
                   mode: "url",
                   audioUrl: `./audio/${targetKey}.mp3`,
                   ttsText: "",
@@ -1110,7 +1116,7 @@
       if (/^\d+$/.test(code)) {
         return {
           qrCode: code,
-          title: `Cerita Bagian ${code} — Suling dan Burung`,
+          title: `Halaman ${code} - Legenda Kota Menara`,
           mode: "url",
           audioUrl: `./audio/${code}.mp3`,
           ttsText: "",
