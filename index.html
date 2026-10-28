@@ -10,35 +10,164 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-chassis: #121518;
-      --bg-panel: #1A1E24;
-      --bg-bay: #0C0E11;
-      --border-hairline: #282F38;
+      --bg-chassis: #070b14;
+      --bg-panel: rgba(20, 29, 47, 0.58);
+      --bg-bay: rgba(6, 10, 20, 0.72);
+      --border-hairline: rgba(255, 255, 255, 0.16);
       --accent-ready: #10B981;
       --accent-locked: #F59E0B;
-      --text-main: #E6EDF3;
-      --text-muted: #8B949E;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
     }
+
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-chassis);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(6, 182, 212, 0.20) 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, rgba(59, 130, 246, 0.18) 0%, transparent 50%),
+        linear-gradient(180deg, #0a1020 0%, #050811 100%);
+      background-attachment: fixed;
       color: var(--text-main);
     }
+
     .font-mono-code {
       font-family: 'IBM Plex Mono', monospace;
     }
+
+    /* Glossy Liquid Glass Header */
+    .glossy-header {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(15, 23, 42, 0.68) 100%);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 10px 30px -10px rgba(0, 0, 0, 0.65);
+    }
+
+    /* Glossy Card with Specular Top Highlight & Diagonal Sheen */
+    .glossy-card {
+      position: relative;
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.04) 42%, rgba(15, 23, 42, 0.65) 100%);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow:
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.42),
+        inset 0 -1px 1px rgba(255, 255, 255, 0.06),
+        0 20px 40px -12px rgba(0, 0, 0, 0.7),
+        0 0 25px -5px rgba(16, 185, 129, 0.08);
+      overflow: hidden;
+    }
+
+    .glossy-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -25%;
+      width: 150%;
+      height: 45%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.0) 100%);
+      transform: rotate(-4deg);
+      pointer-events: none;
+    }
+
+    /* Glossy Recessed Dark Piano-Black Bay */
+    .glossy-bay {
+      background: linear-gradient(180deg, rgba(4, 8, 17, 0.85) 0%, rgba(10, 17, 32, 0.72) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow:
+        inset 0 3px 10px rgba(0, 0, 0, 0.75),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.18);
+    }
+
+    /* Tactile Glossy Aqua/Emerald Gel Primary Button */
+    .glossy-btn-primary {
+      position: relative;
+      background: linear-gradient(180deg, #6EE7B7 0%, #10B981 46%, #059669 54%, #047857 100%);
+      color: #022c22;
+      border: 1px solid rgba(167, 243, 208, 0.65);
+      box-shadow:
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.75),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.25),
+        0 8px 22px -4px rgba(16, 185, 129, 0.55);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glossy-btn-primary:hover {
+      filter: brightness(1.08);
+      box-shadow:
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.88),
+        0 10px 26px -3px rgba(16, 185, 129, 0.7);
+      transform: translateY(-1px);
+    }
+    .glossy-btn-primary:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    /* Glossy Icon / Secondary Glass Pill Button */
+    .glossy-btn-glass {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(15, 23, 42, 0.45) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        0 4px 12px rgba(0, 0, 0, 0.35);
+      transition: all 0.18s ease;
+    }
+    .glossy-btn-glass:hover {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.09) 50%, rgba(15, 23, 42, 0.55) 100%);
+      border-color: rgba(255, 255, 255, 0.36);
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.55),
+        0 6px 16px rgba(16, 185, 129, 0.22);
+    }
+
+    /* Glossy Input & Select */
+    .glossy-input {
+      background: linear-gradient(180deg, rgba(5, 10, 22, 0.8) 0%, rgba(15, 23, 42, 0.65) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        inset 0 2px 5px rgba(0, 0, 0, 0.6),
+        0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+    .glossy-input:focus {
+      border-color: rgba(52, 211, 153, 0.7);
+      box-shadow:
+        inset 0 2px 5px rgba(0, 0, 0, 0.6),
+        0 0 12px rgba(16, 185, 129, 0.35);
+    }
+
+    /* Glossy Progress Track & Liquid Bar */
+    .glossy-progress-track {
+      background: rgba(3, 7, 16, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+    .glossy-progress-fill {
+      background: linear-gradient(90deg, #059669, #10B981, #34D399, #6EE7B7);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.65),
+        0 0 10px rgba(16, 185, 129, 0.7);
+    }
+
     @keyframes scanline {
-      0% { top: 10%; opacity: 0.35; }
-      50% { top: 86%; opacity: 0.95; }
-      100% { top: 10%; opacity: 0.35; }
+      0% { top: 10%; opacity: 0.45; }
+      50% { top: 86%; opacity: 1; }
+      100% { top: 10%; opacity: 0.45; }
     }
     .scan-laser {
       position: absolute;
       left: 10%;
       right: 10%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #10b981, #34d399, #10b981, transparent);
-      box-shadow: 0 0 8px #10b981;
+      height: 2.5px;
+      background: linear-gradient(90deg, transparent, #34d399, #a7f3d0, #34d399, transparent);
+      box-shadow: 0 0 12px #10b981, 0 0 4px #ffffff;
       animation: scanline 2.2s ease-in-out infinite;
     }
     @keyframes eq-bar {
@@ -52,49 +181,56 @@
     .eq-bar-5 { animation: eq-bar 0.7s ease-in-out infinite 0.2s; }
 
     ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: #121518; }
-    ::-webkit-scrollbar-thumb { background: #282F38; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3b4452; }
+    ::-webkit-scrollbar-track { background: rgba(7, 11, 20, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.22); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.38); }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500/30 selection:text-emerald-200">
+<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-400/30 selection:text-emerald-100 relative overflow-x-hidden">
+
+  <!-- Ambient Glossy Light Orbs -->
+  <div class="pointer-events-none fixed inset-0 overflow-hidden z-0" aria-hidden="true">
+    <div class="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-emerald-500/15 blur-3xl"></div>
+    <div class="absolute top-1/3 -right-28 w-80 h-80 rounded-full bg-cyan-500/15 blur-3xl"></div>
+    <div class="absolute -bottom-28 left-1/4 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl"></div>
+  </div>
 
   <!-- Toast Notification -->
   <div id="toastContainer" class="fixed top-3 right-3 z-50 flex flex-col gap-1.5 max-w-xs w-full pointer-events-none px-3 sm:px-0"></div>
 
-  <!-- Minimal Clean Header -->
-  <header class="border-b border-[#282F38] bg-[#161A20]/90 backdrop-blur sticky top-0 z-30">
+  <!-- Glossy Crystal Header -->
+  <header class="glossy-header sticky top-0 z-30">
     <div id="headerContainer" class="max-w-md mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2 transition-all duration-200">
-      <div id="secretLogoTrigger" class="flex items-center gap-2.5 cursor-pointer select-none" title="QR Audio Scanner">
-        <div class="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 active:scale-95 transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <div id="secretLogoTrigger" class="flex items-center gap-2.5 cursor-pointer select-none group" title="QR Audio Scanner">
+        <div class="w-8 h-8 rounded-xl glossy-btn-glass flex items-center justify-center text-emerald-300 shrink-0 active:scale-95 transition shadow-lg shadow-emerald-500/10">
+          <svg class="w-4 h-4 drop-shadow-[0_0_6px_rgba(52,211,153,0.6)]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 7h3v3H7V7zm7 0h3v3h-3V7zM7 14h3v3H7v-3zm7 3h3v-3h-3v3z" />
           </svg>
         </div>
         <div class="flex items-center gap-1.5">
-          <h1 class="text-sm font-bold tracking-tight text-white">QR Audio Scanner</h1>
-          <span id="adminBadge" class="hidden text-[10px] font-mono-code font-semibold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          <h1 class="text-sm font-bold tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">QR Audio Scanner</h1>
+          <span id="adminBadge" class="hidden text-[10px] font-mono-code font-semibold px-1.5 py-0.5 rounded-md bg-amber-400/20 text-amber-200 border border-amber-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
             ADMIN
           </span>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- Status Indicator -->
-        <div class="flex items-center gap-1.5 bg-[#0C0E11] px-2.5 py-1 rounded-full border border-[#282F38]">
-          <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-          <span id="statusBadgeText" class="text-[11px] font-semibold text-emerald-400 truncate">Siap Scan</span>
+        <!-- Glossy Status Indicator Pill -->
+        <div class="flex items-center gap-1.5 glossy-bay px-3 py-1 rounded-full">
+          <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-[0_0_8px_#34d399]"></span>
+          <span id="statusBadgeText" class="text-[11px] font-semibold text-emerald-300 truncate">Siap Scan</span>
         </div>
 
         <!-- Navigasi Rahasia (Muncul saat Cheat Code aktif) -->
-        <nav id="secretAdminNav" class="hidden items-center gap-1 bg-[#0C0E11] p-1 rounded-lg border border-amber-500/40">
-          <button id="tabBtnScanner" type="button" class="px-2.5 py-1 rounded-md text-[11px] font-semibold transition bg-[#1A1E24] text-emerald-400 border border-[#282F38]">
+        <nav id="secretAdminNav" class="hidden items-center gap-1 glossy-bay p-1 rounded-xl border border-amber-400/40">
+          <button id="tabBtnScanner" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition glossy-btn-glass text-emerald-300">
             Pemindai
           </button>
-          <button id="tabBtnMapping" type="button" class="px-2.5 py-1 rounded-md text-[11px] font-medium transition text-[#8B949E] hover:text-white">
+          <button id="tabBtnMapping" type="button" class="px-2.5 py-1 rounded-lg text-[11px] font-medium transition text-slate-300 hover:text-white">
             Daftar QR &amp; Uji Coba
           </button>
-          <button id="btnLockAdmin" type="button" title="Sembunyikan Menu Admin" class="px-2 py-1 rounded-md text-[11px] font-medium text-rose-400 hover:bg-rose-500/15 transition">
+          <button id="btnLockAdmin" type="button" title="Sembunyikan Menu Admin" class="px-2 py-1 rounded-lg text-[11px] font-medium text-rose-300 hover:bg-rose-500/20 transition">
             Tutup
           </button>
           <button id="tabBtnGuide" type="button" class="hidden">Panduan</button>
@@ -104,18 +240,18 @@
   </header>
 
   <!-- Single Focused Main Console -->
-  <main id="mainContainer" class="flex-1 flex flex-col justify-center max-w-md w-full mx-auto px-4 py-5 transition-all duration-200">
+  <main id="mainContainer" class="relative z-10 flex-1 flex flex-col justify-center max-w-md w-full mx-auto px-4 py-5 transition-all duration-200">
 
     <!-- SCANNER & SIMPLE AUDIO PLAYER -->
-    <section id="viewScanner" class="flex flex-col gap-3.5 w-full">
+    <section id="viewScanner" class="flex flex-col gap-4 w-full">
 
-      <!-- Optical Scanner Card -->
-      <div class="bg-[#1A1E24] border border-[#282F38] rounded-xl p-3.5 shadow-xl">
+      <!-- Optical Scanner Glossy Card -->
+      <div class="glossy-card rounded-2xl p-4">
         <!-- Viewport Top Bar: Title + Icon-only Controls -->
-        <div class="flex items-center justify-between gap-2 mb-2.5">
+        <div class="relative z-10 flex items-center justify-between gap-2 mb-3">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-semibold text-slate-200">Pemindai Kamera QR</span>
-            <span id="lockIndicator" class="hidden text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+            <span class="text-xs font-semibold text-white tracking-tight drop-shadow-sm">Pemindai Kamera QR</span>
+            <span id="lockIndicator" class="hidden text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-200 border border-amber-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]">
               Terkunci
             </span>
           </div>
@@ -128,13 +264,13 @@
               type="button"
               title="Aktifkan Kamera"
               aria-label="Toggle Kamera"
-              class="w-8 h-8 rounded-lg bg-[#0C0E11] hover:bg-slate-800 text-slate-300 hover:text-emerald-400 transition border border-[#282F38] flex items-center justify-center"
+              class="w-8 h-8 rounded-xl glossy-btn-glass text-slate-200 hover:text-emerald-300 flex items-center justify-center"
             >
               <svg id="iconCameraOffState" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <svg id="iconCameraOnState" class="w-4 h-4 hidden text-rose-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <svg id="iconCameraOnState" class="w-4 h-4 hidden text-rose-300 drop-shadow-[0_0_6px_rgba(251,113,133,0.6)]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
               </svg>
               <span id="btnToggleCameraLabel" class="sr-only">Mulai Kamera</span>
@@ -146,7 +282,7 @@
               type="button"
               title="Ganti Kamera (Depan/Belakang)"
               aria-label="Ganti Kamera"
-              class="w-8 h-8 rounded-lg bg-[#0C0E11] hover:bg-slate-800 text-slate-300 hover:text-white transition border border-[#282F38] flex items-center justify-center"
+              class="w-8 h-8 rounded-xl glossy-btn-glass text-slate-200 hover:text-white flex items-center justify-center"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -158,7 +294,7 @@
               for="qrFileInput"
               title="Unggah Gambar QR"
               aria-label="Unggah Gambar QR"
-              class="cursor-pointer w-8 h-8 rounded-lg bg-[#0C0E11] hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 transition border border-[#282F38] flex items-center justify-center"
+              class="cursor-pointer w-8 h-8 rounded-xl glossy-btn-glass text-emerald-300 hover:text-emerald-200 flex items-center justify-center"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -169,24 +305,24 @@
         </div>
 
         <!-- Camera Viewport Box -->
-        <div class="relative w-full aspect-square max-h-72 bg-[#0C0E11] rounded-lg overflow-hidden border border-[#282F38] flex items-center justify-center">
+        <div class="relative z-10 w-full aspect-square max-h-72 glossy-bay rounded-xl overflow-hidden flex items-center justify-center">
           <video id="cameraVideo" class="w-full h-full object-cover hidden" playsinline autoplay muted></video>
           <canvas id="cameraCanvas" class="hidden"></canvas>
 
           <!-- Idle Placeholder with "Aktifkan Kamera QR" Button -->
           <div id="cameraPlaceholder" class="flex flex-col items-center justify-center text-center p-5 max-w-xs">
-            <div class="w-11 h-11 rounded-xl bg-[#1A1E24] border border-[#282F38] flex items-center justify-center text-emerald-400 mb-3">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+            <div class="w-12 h-12 rounded-2xl glossy-btn-glass flex items-center justify-center text-emerald-300 mb-3 shadow-lg shadow-emerald-500/15">
+              <svg class="w-5 h-5 drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <p class="text-xs font-semibold text-white mb-1">Kamera Belum Aktif</p>
-            <p class="text-[11px] text-[#8B949E] mb-4 leading-relaxed">
+            <p class="text-xs font-bold text-white mb-1 drop-shadow-sm">Kamera Belum Aktif</p>
+            <p class="text-[11px] text-slate-300/85 mb-4 leading-relaxed">
               Sentuh tombol di bawah untuk mengaktifkan kamera pemindai QR.
             </p>
-            <button id="btnStartCameraCenter" type="button" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-[0.99] text-slate-950 font-semibold text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-500/10">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <button id="btnStartCameraCenter" type="button" class="px-4 py-2.5 rounded-xl glossy-btn-primary font-bold text-xs flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
@@ -196,54 +332,54 @@
 
           <!-- Active Scanning Reticle -->
           <div id="scanGuideOverlay" class="hidden inset-0 pointer-events-none absolute flex flex-col items-center justify-center">
-            <div id="reticleBox" class="w-48 h-48 relative border border-emerald-400/40 rounded-xl transition-all duration-150">
-              <div class="-top-0.5 -left-0.5 w-5 h-5 border-t-2 border-l-2 border-emerald-400 rounded-tl absolute"></div>
-              <div class="-top-0.5 -right-0.5 w-5 h-5 border-t-2 border-r-2 border-emerald-400 rounded-tr absolute"></div>
-              <div class="-bottom-0.5 -left-0.5 w-5 h-5 border-b-2 border-l-2 border-emerald-400 rounded-bl absolute"></div>
-              <div class="-bottom-0.5 -right-0.5 w-5 h-5 border-b-2 border-r-2 border-emerald-400 rounded-br absolute"></div>
+            <div id="reticleBox" class="w-48 h-48 relative border border-emerald-300/50 rounded-2xl transition-all duration-150 shadow-[inset_0_0_24px_rgba(16,185,129,0.2)]">
+              <div class="-top-0.5 -left-0.5 w-6 h-6 border-t-2 border-l-2 border-emerald-300 rounded-tl-xl absolute drop-shadow-[0_0_6px_#34d399]"></div>
+              <div class="-top-0.5 -right-0.5 w-6 h-6 border-t-2 border-r-2 border-emerald-300 rounded-tr-xl absolute drop-shadow-[0_0_6px_#34d399]"></div>
+              <div class="-bottom-0.5 -left-0.5 w-6 h-6 border-b-2 border-l-2 border-emerald-300 rounded-bl-xl absolute drop-shadow-[0_0_6px_#34d399]"></div>
+              <div class="-bottom-0.5 -right-0.5 w-6 h-6 border-b-2 border-r-2 border-emerald-300 rounded-br-xl absolute drop-shadow-[0_0_6px_#34d399]"></div>
               <div class="scan-laser"></div>
             </div>
-            <div class="mt-2.5 px-2.5 py-0.5 rounded-full bg-[#0C0E11]/85 border border-[#282F38] flex items-center gap-1.5">
-              <span id="scanPulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-              <span id="scanEngineStatusText" class="text-[10px] font-mono-code text-emerald-300">Memindai QR...</span>
+            <div class="mt-3 px-3 py-1 rounded-full glossy-btn-glass flex items-center gap-1.5">
+              <span id="scanPulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping"></span>
+              <span id="scanEngineStatusText" class="text-[10px] font-mono-code text-emerald-200">Memindai QR...</span>
             </div>
           </div>
 
           <!-- Flash hijau saat QR berhasil terdeteksi -->
-          <div id="scanSuccessFlash" class="hidden pointer-events-none absolute inset-0 bg-emerald-400/25 border-2 border-emerald-400 rounded-lg z-10 transition-opacity duration-200"></div>
+          <div id="scanSuccessFlash" class="hidden pointer-events-none absolute inset-0 bg-emerald-400/30 border-2 border-emerald-300 rounded-xl z-10 transition-opacity duration-200"></div>
 
           <!-- Audio Playing Lock Overlay -->
-          <div id="playingLockOverlay" class="hidden absolute inset-0 bg-[#0C0E11]/92 backdrop-blur-sm flex flex-col items-center justify-center p-5 text-center z-20">
+          <div id="playingLockOverlay" class="hidden absolute inset-0 bg-[#060b16]/85 backdrop-blur-xl flex flex-col items-center justify-center p-5 text-center z-20">
             <!-- Active Playing View: Animated Equalizer -->
-            <div id="overlayEqContainer" class="flex items-end gap-1 h-7 mb-2.5">
-              <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-1"></span>
-              <span class="w-1.5 h-6 bg-emerald-400 rounded-full eq-bar-2"></span>
-              <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-3"></span>
-              <span class="w-1.5 h-6 bg-emerald-400 rounded-full eq-bar-4"></span>
-              <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-5"></span>
+            <div id="overlayEqContainer" class="flex items-end gap-1.5 h-7 mb-3">
+              <span class="w-1.5 h-6 bg-amber-300 rounded-full eq-bar-1 shadow-[0_0_8px_#fcd34d]"></span>
+              <span class="w-1.5 h-6 bg-emerald-300 rounded-full eq-bar-2 shadow-[0_0_8px_#6ee7b7]"></span>
+              <span class="w-1.5 h-6 bg-amber-300 rounded-full eq-bar-3 shadow-[0_0_8px_#fcd34d]"></span>
+              <span class="w-1.5 h-6 bg-emerald-300 rounded-full eq-bar-4 shadow-[0_0_8px_#6ee7b7]"></span>
+              <span class="w-1.5 h-6 bg-amber-300 rounded-full eq-bar-5 shadow-[0_0_8px_#fcd34d]"></span>
             </div>
 
             <!-- Waiting for Tap to Play View: Large Glowing Play Icon -->
-            <div id="overlayTapIconContainer" class="hidden w-14 h-14 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 mb-2.5 animate-pulse cursor-pointer shadow-lg shadow-emerald-500/30">
+            <div id="overlayTapIconContainer" class="hidden w-14 h-14 rounded-full glossy-btn-primary flex items-center justify-center text-slate-950 mb-3 animate-pulse cursor-pointer">
               <svg class="w-7 h-7 fill-current translate-x-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </div>
 
-            <span id="overlayBadgeStatus" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-1.5">
+            <span id="overlayBadgeStatus" class="text-[11px] font-semibold px-3 py-0.5 rounded-full bg-amber-400/20 text-amber-200 border border-amber-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] mb-2">
               Sedang Memutar Audio
             </span>
-            <h3 id="overlayTrackTitle" class="text-sm font-bold text-white mb-1 truncate max-w-xs">Memutar Audio...</h3>
+            <h3 id="overlayTrackTitle" class="text-sm font-bold text-white mb-1 truncate max-w-xs drop-shadow-sm">Memutar Audio...</h3>
             <p id="overlayQrValue" class="hidden">QR: -</p>
-            <p id="overlayHintText" class="text-[11px] text-[#8B949E] max-w-xs leading-snug mb-3">
+            <p id="overlayHintText" class="text-[11px] text-slate-300 max-w-xs leading-snug mb-3.5">
               Pemindai akan aktif kembali otomatis setelah audio selesai.
             </p>
 
             <!-- Tombol Sentuh untuk Mulai Memutar di Layar Utama (Saat Autoplay ditahan) -->
-            <button id="btnOverlayTapToPlay" type="button" class="hidden px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-500/30 mb-2">
+            <button id="btnOverlayTapToPlay" type="button" class="hidden px-4 py-2 rounded-xl glossy-btn-primary font-bold text-xs flex items-center gap-2 mb-2.5">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
               Sentuh untuk Mendengarkan Audio
             </button>
 
-            <button id="btnStopPlaybackOverlay" type="button" class="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 active:scale-95 text-rose-300 border border-rose-500/40 text-[11px] font-semibold transition flex items-center gap-1.5">
+            <button id="btnStopPlaybackOverlay" type="button" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-b from-rose-400/30 to-rose-600/30 hover:from-rose-400/40 hover:to-rose-600/40 active:scale-95 text-rose-200 border border-rose-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] text-[11px] font-semibold transition flex items-center gap-1.5">
               <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
               Hentikan Audio
             </button>
@@ -257,28 +393,28 @@
         </label>
       </div>
 
-      <!-- Simple Audio Player Deck (Hanya Nama Audio & Panjang/Durasi Audio) -->
-      <div class="bg-[#1A1E24] border border-[#282F38] rounded-xl p-3.5 shadow-xl">
-        <div class="flex items-center justify-between gap-2 mb-2">
-          <span class="text-[11px] font-medium text-[#8B949E] uppercase tracking-wider">Audio</span>
+      <!-- Simple Audio Player Glossy Deck (Hanya Nama Audio & Panjang/Durasi Audio) -->
+      <div class="glossy-card rounded-2xl p-4">
+        <div class="relative z-10 flex items-center justify-between gap-2 mb-2.5">
+          <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider">Audio</span>
           <div class="flex items-center gap-2">
-            <button id="btnPlayerReplay" type="button" class="hidden text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 transition flex items-center gap-1">
+            <button id="btnPlayerReplay" type="button" class="hidden text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-400/20 hover:bg-emerald-400/30 text-emerald-200 border border-emerald-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] transition flex items-center gap-1">
               <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
               Putar Ulang
             </button>
-            <button id="btnPlayerStop" type="button" class="hidden text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition">
+            <button id="btnPlayerStop" type="button" class="hidden text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-rose-400/20 hover:bg-rose-400/30 text-rose-200 border border-rose-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] transition">
               Hentikan
             </button>
-            <span id="playerStatePill" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#0C0E11] text-slate-300 border border-[#282F38]">
+            <span id="playerStatePill" class="text-[10px] font-semibold px-2.5 py-0.5 rounded-full glossy-bay text-slate-200">
               Menunggu Scan
             </span>
           </div>
         </div>
 
-        <div class="bg-[#0C0E11] border border-[#282F38] rounded-lg p-3">
+        <div class="relative z-10 glossy-bay rounded-xl p-3.5">
           <!-- Nama Audio -->
           <div class="mb-2.5">
-            <h3 id="nowPlayingTitle" class="text-xs font-bold text-white truncate">Belum ada audio yang diputar</h3>
+            <h3 id="nowPlayingTitle" class="text-xs font-bold text-white truncate drop-shadow-sm">Belum ada audio yang diputar</h3>
             <!-- Elemen teknis disembunyikan agar tetap kompatibel dengan state -->
             <span id="nowPlayingType" class="hidden">-</span>
             <div id="nowPlayingQrCode" class="hidden">-</div>
@@ -286,23 +422,23 @@
 
           <!-- Panjang Audio & Progress Bar -->
           <div>
-            <div class="flex justify-between text-[11px] font-mono-code text-[#8B949E] mb-1.5">
+            <div class="flex justify-between text-[11px] font-mono-code text-slate-300/90 mb-1.5">
               <span id="audioCurrentTime">00:00</span>
               <span id="audioDuration">00:00</span>
             </div>
-            <div class="w-full h-1.5 bg-[#1A1E24] rounded-full overflow-hidden">
-              <div id="audioProgressBar" class="h-full bg-emerald-500 transition-all duration-150" style="width: 0%"></div>
+            <div class="w-full h-2 glossy-progress-track rounded-full overflow-hidden">
+              <div id="audioProgressBar" class="h-full glossy-progress-fill rounded-full transition-all duration-150" style="width: 0%"></div>
             </div>
           </div>
 
           <!-- Autoplay Prompt saat Dibuka dari Link QR di HP -->
-          <div id="autoplayBanner" class="hidden mt-3 p-3 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-center animate-pulse">
-            <div class="flex items-center justify-center gap-1.5 mb-1 text-emerald-300 font-bold text-xs">
+          <div id="autoplayBanner" class="hidden mt-3 p-3 rounded-xl bg-emerald-400/15 border border-emerald-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] text-center animate-pulse">
+            <div class="flex items-center justify-center gap-1.5 mb-1 text-emerald-200 font-bold text-xs">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
               <span>Audio Siap Diputar</span>
             </div>
             <p id="autoplayTrackTitle" class="text-xs font-semibold text-white mb-2 truncate">Cerita Rakyat</p>
-            <button id="btnAutoplayTrigger" type="button" class="w-full py-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20">
+            <button id="btnAutoplayTrigger" type="button" class="w-full py-2 px-3 rounded-xl glossy-btn-primary font-bold text-xs flex items-center justify-center gap-1.5">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
               Sentuh untuk Mendengarkan Audio
             </button>
@@ -335,125 +471,127 @@
 
     <!-- TAB 2: DAFTAR QR & UJI COBA (Tersembunyi secara default, terbuka dengan Cheat Code) -->
     <section id="viewMapping" class="hidden w-full">
-      <div class="mb-3 flex flex-wrap items-center justify-between gap-2 bg-amber-500/10 border border-amber-500/30 rounded-xl px-3.5 py-2.5">
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-          <span class="text-xs font-semibold text-amber-200">Panel Admin: Daftar QR &amp; Uji Coba</span>
+      <div class="mb-3.5 flex flex-wrap items-center justify-between gap-2 glossy-card rounded-2xl px-4 py-2.5 border-amber-300/35">
+        <div class="relative z-10 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amber-300 shadow-[0_0_8px_#fcd34d]"></span>
+          <span class="text-xs font-semibold text-amber-100">Panel Admin: Daftar QR &amp; Uji Coba</span>
         </div>
-        <div class="flex items-center gap-1.5">
-          <button id="btnBackToScanner" type="button" class="px-2.5 py-1 rounded-lg bg-[#1A1E24] hover:bg-slate-800 text-emerald-300 border border-[#282F38] text-[11px] font-semibold transition">
+        <div class="relative z-10 flex items-center gap-1.5">
+          <button id="btnBackToScanner" type="button" class="px-3 py-1 rounded-xl glossy-btn-glass text-emerald-200 text-[11px] font-semibold">
             &larr; Ke Pemindai
           </button>
-          <button id="btnCloseAdminPanel" type="button" class="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-[11px] font-semibold transition">
+          <button id="btnCloseAdminPanel" type="button" class="px-3 py-1 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] text-[11px] font-semibold transition">
             Kunci Menu
           </button>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-start">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
 
         <!-- Tambah / Edit Pemetaan QR ke Audio (5 cols) -->
-        <div class="md:col-span-5 bg-[#1A1E24] border border-[#282F38] rounded-xl p-3.5 shadow-xl">
-          <h2 class="text-xs font-bold text-white mb-1">Tambah Pemetaan QR ke Audio</h2>
-          <p class="text-[11px] text-[#8B949E] mb-3 leading-snug">
-            Hubungkan kode QR dengan URL file audio (<code class="text-emerald-300 font-mono-code">.mp3/.wav</code>), narasi suara, atau nada sintetis.
-          </p>
+        <div class="md:col-span-5 glossy-card rounded-2xl p-4">
+          <div class="relative z-10">
+            <h2 class="text-xs font-bold text-white mb-1">Tambah Pemetaan QR ke Audio</h2>
+            <p class="text-[11px] text-slate-300/85 mb-3 leading-snug">
+              Hubungkan kode QR dengan URL file audio (<code class="text-emerald-300 font-mono-code">.mp3/.wav</code>), narasi suara, atau nada sintetis.
+            </p>
 
-          <form id="formAddMapping" class="space-y-2.5">
-            <div>
-              <label for="inputQrKey" class="block text-[11px] font-medium text-slate-300 mb-1">Isi Teks / ID Kode QR</label>
-              <input id="inputQrKey" type="text" required placeholder="Contoh: KOLEKSI-01" class="w-full px-2.5 py-1.5 rounded-lg bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500" />
-            </div>
+            <form id="formAddMapping" class="space-y-2.5">
+              <div>
+                <label for="inputQrKey" class="block text-[11px] font-medium text-slate-200 mb-1">Isi Teks / ID Kode QR</label>
+                <input id="inputQrKey" type="text" required placeholder="Contoh: KOLEKSI-01" class="w-full px-3 py-1.5 rounded-xl glossy-input text-xs text-white focus:outline-none" />
+              </div>
 
-            <div>
-              <label for="inputAudioTitle" class="block text-[11px] font-medium text-slate-300 mb-1">Judul / Nama Audio</label>
-              <input id="inputAudioTitle" type="text" required placeholder="Contoh: Penjelasan Ruang Utama" class="w-full px-2.5 py-1.5 rounded-lg bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500" />
-            </div>
+              <div>
+                <label for="inputAudioTitle" class="block text-[11px] font-medium text-slate-200 mb-1">Judul / Nama Audio</label>
+                <input id="inputAudioTitle" type="text" required placeholder="Contoh: Penjelasan Ruang Utama" class="w-full px-3 py-1.5 rounded-xl glossy-input text-xs text-white focus:outline-none" />
+              </div>
 
-            <div>
-              <label for="selectAudioMode" class="block text-[11px] font-medium text-slate-300 mb-1">Sumber Audio</label>
-              <select id="selectAudioMode" class="w-full px-2.5 py-1.5 rounded-lg bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500">
-                <option value="url">URL File Audio (.mp3 / .wav / .ogg)</option>
-                <option value="tts">Suara Narasi (Text-to-Speech ID)</option>
-                <option value="synth">Melodi Synthesizer (Web Audio API)</option>
-              </select>
-            </div>
+              <div>
+                <label for="selectAudioMode" class="block text-[11px] font-medium text-slate-200 mb-1">Sumber Audio</label>
+                <select id="selectAudioMode" class="w-full px-3 py-1.5 rounded-xl glossy-input text-xs text-white focus:outline-none">
+                  <option value="url" class="bg-slate-900">URL File Audio (.mp3 / .wav / .ogg)</option>
+                  <option value="tts" class="bg-slate-900">Suara Narasi (Text-to-Speech ID)</option>
+                  <option value="synth" class="bg-slate-900">Melodi Synthesizer (Web Audio API)</option>
+                </select>
+              </div>
 
-            <div id="fieldContainerUrl">
-              <label for="inputAudioUrl" class="block text-[11px] font-medium text-slate-300 mb-1">URL / Path File Audio</label>
-              <input id="inputAudioUrl" type="text" placeholder="./audio/koleksi-01.mp3" class="w-full px-2.5 py-1.5 rounded-lg bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500" />
-            </div>
+              <div id="fieldContainerUrl">
+                <label for="inputAudioUrl" class="block text-[11px] font-medium text-slate-200 mb-1">URL / Path File Audio</label>
+                <input id="inputAudioUrl" type="text" placeholder="./audio/koleksi-01.mp3" class="w-full px-3 py-1.5 rounded-xl glossy-input text-xs text-white focus:outline-none" />
+              </div>
 
-            <div id="fieldContainerTts" class="hidden">
-              <label for="inputTtsText" class="block text-[11px] font-medium text-slate-300 mb-1">Kalimat Narasi</label>
-              <textarea id="inputTtsText" rows="2" placeholder="Teks yang akan dibacakan sampai selesai..." class="w-full px-2.5 py-1.5 rounded-lg bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500"></textarea>
-            </div>
+              <div id="fieldContainerTts" class="hidden">
+                <label for="inputTtsText" class="block text-[11px] font-medium text-slate-200 mb-1">Kalimat Narasi</label>
+                <textarea id="inputTtsText" rows="2" placeholder="Teks yang akan dibacakan sampai selesai..." class="w-full px-3 py-1.5 rounded-xl glossy-input text-xs text-white focus:outline-none"></textarea>
+              </div>
 
-            <div id="fieldContainerSynth" class="hidden">
-              <label for="selectSynthPreset" class="block text-[11px] font-medium text-slate-300 mb-1">Pilih Melodi Nada</label>
-              <select id="selectSynthPreset" class="w-full px-2.5 py-1.5 rounded-lg bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500">
-                <option value="chime">Chime Harmoni Penyambutan (5d)</option>
-                <option value="fanfare">Fanfare Sukses Checkpoint (6d)</option>
-                <option value="ambient">Ambient Museum Sci-Fi (7d)</option>
-              </select>
-            </div>
+              <div id="fieldContainerSynth" class="hidden">
+                <label for="selectSynthPreset" class="block text-[11px] font-medium text-slate-200 mb-1">Pilih Melodi Nada</label>
+                <select id="selectSynthPreset" class="w-full px-3 py-1.5 rounded-xl glossy-input text-xs text-white focus:outline-none">
+                  <option value="chime" class="bg-slate-900">Chime Harmoni Penyambutan (5d)</option>
+                  <option value="fanfare" class="bg-slate-900">Fanfare Sukses Checkpoint (6d)</option>
+                  <option value="ambient" class="bg-slate-900">Ambient Museum Sci-Fi (7d)</option>
+                </select>
+              </div>
 
-            <button type="submit" class="w-full py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs transition">
-              Simpan Pemetaan QR
-            </button>
-          </form>
+              <button type="submit" class="w-full py-2.5 rounded-xl glossy-btn-primary font-bold text-xs">
+                Simpan Pemetaan QR
+              </button>
+            </form>
+          </div>
         </div>
 
         <!-- Daftar Kode QR & Generator Uji Coba (7 cols) -->
-        <div class="md:col-span-7 bg-[#1A1E24] border border-[#282F38] rounded-xl p-3.5 flex flex-col shadow-xl">
-          <div class="flex items-center justify-between gap-2 mb-2.5">
+        <div class="md:col-span-7 glossy-card rounded-2xl p-4 flex flex-col">
+          <div class="relative z-10 flex items-center justify-between gap-2 mb-3">
             <div>
               <h2 class="text-xs font-bold text-white">Daftar Kode QR &amp; Generator Uji Coba</h2>
-              <p class="text-[11px] text-[#8B949E]">Klik <strong>QR</strong> untuk pratinjau kode, atau klik <strong>Uji</strong> untuk memutar audio.</p>
+              <p class="text-[11px] text-slate-300/85">Klik <strong>QR</strong> untuk pratinjau kode, atau klik <strong>Uji</strong> untuk memutar audio.</p>
             </div>
             <div class="flex items-center gap-1.5">
-              <button id="btnExportGithubConfig" type="button" class="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-medium transition">
+              <button id="btnExportGithubConfig" type="button" class="text-[11px] px-2.5 py-1 rounded-xl bg-emerald-400/20 hover:bg-emerald-400/30 text-emerald-200 border border-emerald-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] font-medium transition">
                 Salin JSON GitHub
               </button>
-              <button id="btnResetDefaultMappings" type="button" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#0C0E11] hover:bg-slate-800 text-slate-300 border border-[#282F38] transition">
+              <button id="btnResetDefaultMappings" type="button" class="text-[11px] px-2.5 py-1 rounded-xl glossy-btn-glass text-slate-200">
                 Reset Default
               </button>
             </div>
           </div>
 
-          <div id="mappingListContainer" class="space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
+          <div id="mappingListContainer" class="relative z-10 space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
 
           <!-- Pratinjau Kode QR -->
-          <div id="qrPreviewCard" class="mt-3 pt-3 border-t border-[#282F38] flex flex-col gap-3 bg-[#0C0E11] p-3.5 rounded-lg">
-            <div class="flex flex-col gap-2 border-b border-[#282F38] pb-2.5">
+          <div id="qrPreviewCard" class="relative z-10 mt-3.5 pt-3.5 border-t border-white/15 flex flex-col gap-3 glossy-bay p-3.5 rounded-xl">
+            <div class="flex flex-col gap-2 border-b border-white/10 pb-2.5">
               <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">Generator Kode QR</span>
+                <span class="text-[10px] font-semibold text-emerald-300 uppercase tracking-wider">Generator Kode QR</span>
                 <div class="flex items-center gap-1.5">
-                  <label for="selectQrFormatMode" class="text-[11px] text-slate-300 font-medium">Format:</label>
-                  <select id="selectQrFormatMode" class="text-[11px] bg-[#1A1E24] border border-[#282F38] text-emerald-300 rounded px-2 py-1 focus:outline-none focus:border-emerald-500">
-                    <option value="web_url" selected>🌐 Link Web (Buka di Kamera HP)</option>
-                    <option value="id_only">⚡ ID Singkat (Scanner Web)</option>
-                    <option value="portable">📦 Mandiri (Portable Audio)</option>
+                  <label for="selectQrFormatMode" class="text-[11px] text-slate-200 font-medium">Format:</label>
+                  <select id="selectQrFormatMode" class="text-[11px] glossy-input text-emerald-200 rounded-lg px-2 py-1 focus:outline-none">
+                    <option value="web_url" class="bg-slate-900" selected>🌐 Link Web (Buka di Kamera HP)</option>
+                    <option value="id_only" class="bg-slate-900">⚡ ID Singkat (Scanner Web)</option>
+                    <option value="portable" class="bg-slate-900">📦 Mandiri (Portable Audio)</option>
                   </select>
                 </div>
               </div>
               <div id="containerBaseUrlInput" class="flex items-center gap-2">
-                <label for="inputBaseWebUrl" class="text-[10px] text-[#8B949E] shrink-0 font-medium">Base URL:</label>
-                <input id="inputBaseWebUrl" type="text" class="w-full text-[11px] font-mono-code px-2 py-1 rounded bg-[#1A1E24] border border-[#282F38] text-emerald-300 focus:outline-none focus:border-emerald-500" placeholder="https://rifkiindrazakaria.github.io/CeritaRakyat/" />
+                <label for="inputBaseWebUrl" class="text-[10px] text-slate-300 shrink-0 font-medium">Base URL:</label>
+                <input id="inputBaseWebUrl" type="text" class="w-full text-[11px] font-mono-code px-2.5 py-1 rounded-lg glossy-input text-emerald-200 focus:outline-none" placeholder="https://rifkiindrazakaria.github.io/CeritaRakyat/" />
               </div>
               <input id="chkPortableQrMode" type="checkbox" class="hidden" />
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-4">
               <!-- Ukuran QR diperbesar (180x180) dengan Quiet Zone putih yang lebar agar kamera langsung merespon -->
-              <div id="qrCanvasRender" class="bg-white p-3.5 rounded-xl shrink-0 shadow-md flex items-center justify-center min-w-[208px] min-h-[208px]"></div>
+              <div id="qrCanvasRender" class="bg-white p-3.5 rounded-2xl shrink-0 shadow-[0_10px_25px_rgba(0,0,0,0.5)] flex items-center justify-center min-w-[208px] min-h-[208px]"></div>
               <div class="min-w-0 flex-1 text-center sm:text-left">
                 <h4 id="qrPreviewTitle" class="text-xs font-bold text-white truncate">Pilih item di atas</h4>
                 <p id="qrPreviewCodeText" class="text-[11px] font-mono-code text-emerald-300 break-all mt-1">-</p>
-                <p id="qrPreviewSubHint" class="text-[11px] text-[#8B949E] mt-1.5 leading-relaxed">
+                <p id="qrPreviewSubHint" class="text-[11px] text-slate-300/85 mt-1.5 leading-relaxed">
                   Mode Link Web: Kode QR langsung membuka website dan memutar audio saat dipindai kamera HP mana pun.
                 </p>
                 <div class="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                  <button id="btnDownloadQr" type="button" class="px-3 py-1.5 rounded-lg bg-[#1A1E24] hover:bg-slate-800 text-emerald-300 border border-[#282F38] text-[11px] font-semibold transition">
+                  <button id="btnDownloadQr" type="button" class="px-3.5 py-1.5 rounded-xl glossy-btn-glass text-emerald-200 text-[11px] font-semibold">
                     Unduh Gambar QR (+ Judul)
                   </button>
                 </div>
@@ -462,11 +600,11 @@
           </div>
 
           <!-- Info Singkat Sinkronisasi GitHub -->
-          <div class="mt-2.5 p-2.5 rounded-lg bg-[#0C0E11]/70 border border-[#282F38] text-[11px] text-[#8B949E] leading-relaxed">
-            <p class="font-semibold text-slate-300 mb-0.5">Panduan Scan QR Lintas Perangkat / HP:</p>
+          <div class="relative z-10 mt-3 p-3 rounded-xl glossy-bay text-[11px] text-slate-300/90 leading-relaxed">
+            <p class="font-semibold text-white mb-0.5">Panduan Scan QR Lintas Perangkat / HP:</p>
             <ul class="list-disc list-inside space-y-0.5">
               <li>Pilih format <strong>Link Web</strong> agar saat discan menggunakan <strong>Kamera bawaan HP</strong> (iPhone/Android/Google Lens), HP otomatis membuka website ini dan memutar audio cerita rakyat.</li>
-              <li>File audio tersimpan di repositori GitHub (<code class="text-emerald-300 font-mono-code">./audio/1.mp3</code> sampai <code class="text-emerald-300 font-mono-code">10.mp3</code>) dan otomatis disinkronkan melalui file <code class="text-amber-300 font-mono-code">qr-mappings.json</code>.</li>
+              <li>File audio tersimpan di repositori GitHub (<code class="text-emerald-300 font-mono-code">./audio/1.mp3</code> sampai <code class="text-emerald-300 font-mono-code">10.mp3</code>) dan otomatis disinkronkan melalui file <code class="text-amber-200 font-mono-code">qr-mappings.json</code>.</li>
             </ul>
           </div>
         </div>
@@ -1185,12 +1323,12 @@
       const toast = document.createElement("div");
       const colorClasses =
         type === "success"
-          ? "bg-emerald-950/95 border-emerald-500/40 text-emerald-200"
+          ? "bg-emerald-950/85 border-emerald-400/50 text-emerald-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_10px_25px_rgba(0,0,0,0.5)]"
           : type === "warn"
-          ? "bg-amber-950/95 border-amber-500/40 text-amber-200"
-          : "bg-[#1A1E24]/95 border-[#282F38] text-slate-200";
+          ? "bg-amber-950/85 border-amber-400/50 text-amber-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_10px_25px_rgba(0,0,0,0.5)]"
+          : "bg-slate-900/85 border-white/25 text-slate-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_10px_25px_rgba(0,0,0,0.5)]";
 
-      toast.className = `pointer-events-auto border px-3 py-2 rounded-lg shadow-lg text-[11px] font-medium transition-all duration-300 ${colorClasses}`;
+      toast.className = `pointer-events-auto backdrop-blur-xl border px-3.5 py-2 rounded-xl text-[11px] font-medium transition-all duration-300 ${colorClasses}`;
       toast.textContent = message;
       container.appendChild(toast);
 
@@ -1288,45 +1426,45 @@
 
         if (isWaitingUserGesture) {
           // Menunggu interaksi sentuhan dari pengguna (Autoplay restriction)
-          statusDot.className = "w-2 h-2 rounded-full bg-amber-400 shrink-0";
+          statusDot.className = "w-2 h-2 rounded-full bg-amber-300 shrink-0 shadow-[0_0_8px_#fcd34d]";
           statusBadgeText.textContent = "Ketuk untuk Memutar";
-          statusBadgeText.className = "text-[11px] font-semibold text-amber-300 truncate";
+          statusBadgeText.className = "text-[11px] font-semibold text-amber-200 truncate";
           lockIndicator.textContent = "Siap Diputar";
 
           playerStatePill.textContent = "Siap Diputar (Ketuk)";
-          playerStatePill.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30";
+          playerStatePill.className = "text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-200 border border-amber-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]";
 
           if (overlayEqContainer) overlayEqContainer.classList.add("hidden");
           if (overlayTapIconContainer) overlayTapIconContainer.classList.remove("hidden");
           if (overlayBadgeStatus) {
             overlayBadgeStatus.textContent = "Audio Siap Diputar";
-            overlayBadgeStatus.className = "text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 mb-1.5";
+            overlayBadgeStatus.className = "text-[11px] font-semibold px-3 py-0.5 rounded-full bg-emerald-400/20 text-emerald-200 border border-emerald-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] mb-2";
           }
           if (overlayHintText) overlayHintText.textContent = "Sentuh layar atau tombol di bawah untuk mendengarkan audio.";
           if (btnOverlayTapToPlay) btnOverlayTapToPlay.classList.remove("hidden");
         } else {
           // Audio sedang berjalan aktif
-          statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0";
+          statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-[0_0_8px_#34d399]";
           statusBadgeText.textContent = "Memutar Audio";
-          statusBadgeText.className = "text-[11px] font-semibold text-emerald-300 truncate";
+          statusBadgeText.className = "text-[11px] font-semibold text-emerald-200 truncate";
           lockIndicator.textContent = "Terkunci";
 
           playerStatePill.textContent = "Diputar";
-          playerStatePill.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+          playerStatePill.className = "text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-200 border border-emerald-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]";
 
           if (overlayEqContainer) overlayEqContainer.classList.remove("hidden");
           if (overlayTapIconContainer) overlayTapIconContainer.classList.add("hidden");
           if (overlayBadgeStatus) {
             overlayBadgeStatus.textContent = "Sedang Memutar Audio";
-            overlayBadgeStatus.className = "text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-1.5";
+            overlayBadgeStatus.className = "text-[11px] font-semibold px-3 py-0.5 rounded-full bg-amber-400/20 text-amber-200 border border-amber-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] mb-2";
           }
           if (overlayHintText) overlayHintText.textContent = "Pemindai akan aktif kembali otomatis setelah audio selesai.";
           if (btnOverlayTapToPlay) btnOverlayTapToPlay.classList.add("hidden");
         }
       } else {
-        statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0";
+        statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0 shadow-[0_0_8px_#34d399]";
         statusBadgeText.textContent = "Siap Scan";
-        statusBadgeText.className = "text-[11px] font-semibold text-emerald-400 truncate";
+        statusBadgeText.className = "text-[11px] font-semibold text-emerald-300 truncate";
         lockIndicator.classList.add("hidden");
         lockIndicator.textContent = "Terkunci";
         playingLockOverlay.classList.add("hidden");
@@ -1334,7 +1472,7 @@
         if (overlayTapIconContainer) overlayTapIconContainer.classList.add("hidden");
 
         playerStatePill.textContent = "Siap Scan";
-        playerStatePill.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
+        playerStatePill.className = "text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-400/15 text-emerald-200 border border-emerald-300/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]";
         if (btnPlayerStop) btnPlayerStop.classList.add("hidden");
         btnForceStopAudio.disabled = true;
       }
@@ -2010,14 +2148,14 @@
       // Lebarkan container saat membuka Daftar QR & Uji Coba agar rapi
       if (isMapping) {
         headerContainer.className = "max-w-4xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2 transition-all duration-200";
-        mainContainer.className = "flex-1 flex flex-col justify-start max-w-4xl w-full mx-auto px-4 py-5 transition-all duration-200";
+        mainContainer.className = "relative z-10 flex-1 flex flex-col justify-start max-w-4xl w-full mx-auto px-4 py-5 transition-all duration-200";
       } else {
         headerContainer.className = "max-w-md mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2 transition-all duration-200";
-        mainContainer.className = "flex-1 flex flex-col justify-center max-w-md w-full mx-auto px-4 py-5 transition-all duration-200";
+        mainContainer.className = "relative z-10 flex-1 flex flex-col justify-center max-w-md w-full mx-auto px-4 py-5 transition-all duration-200";
       }
 
-      const activeClass = "px-2.5 py-1 rounded-md text-[11px] font-semibold transition bg-[#1A1E24] text-emerald-400 border border-[#282F38]";
-      const inactiveClass = "px-2.5 py-1 rounded-md text-[11px] font-medium transition text-[#8B949E] hover:text-white";
+      const activeClass = "px-2.5 py-1 rounded-lg text-[11px] font-semibold transition glossy-btn-glass text-emerald-300";
+      const inactiveClass = "px-2.5 py-1 rounded-lg text-[11px] font-medium transition text-slate-300 hover:text-white";
 
       tabBtnScanner.className = !isMapping ? activeClass : inactiveClass;
       tabBtnMapping.className = isMapping ? activeClass : inactiveClass;
@@ -2212,7 +2350,7 @@
 
       qrMappings.forEach((item, index) => {
         const card = document.createElement("div");
-        card.className = "px-2.5 py-2 rounded-lg bg-[#0C0E11] border border-[#282F38] flex items-center justify-between gap-2";
+        card.className = "px-3 py-2 rounded-xl glossy-bay flex items-center justify-between gap-2";
 
         const modeBadge =
           item.mode === "url"
@@ -2224,19 +2362,19 @@
         card.innerHTML = `
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
-              <span class="text-[11px] font-mono-code font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">${item.qrCode}</span>
-              <span class="text-[10px] text-[#8B949E] truncate">${modeBadge}</span>
+              <span class="text-[11px] font-mono-code font-semibold px-1.5 py-0.5 rounded-md bg-emerald-400/20 text-emerald-200 border border-emerald-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]">${item.qrCode}</span>
+              <span class="text-[10px] text-slate-300/80 truncate">${modeBadge}</span>
             </div>
             <h4 class="text-xs font-semibold text-white mt-0.5 truncate">${item.title}</h4>
           </div>
           <div class="flex items-center gap-1 shrink-0">
-            <button type="button" data-action="preview-qr" data-index="${index}" class="px-2 py-1 rounded bg-[#1A1E24] hover:bg-slate-800 text-[11px] text-slate-200 border border-[#282F38] transition">
+            <button type="button" data-action="preview-qr" data-index="${index}" class="px-2.5 py-1 rounded-lg glossy-btn-glass text-[11px] text-slate-100 transition">
               QR
             </button>
-            <button type="button" data-action="test-scan" data-index="${index}" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-[11px] text-emerald-300 border border-emerald-500/30 font-medium transition">
+            <button type="button" data-action="test-scan" data-index="${index}" class="px-2.5 py-1 rounded-lg bg-emerald-400/20 hover:bg-emerald-400/30 text-[11px] text-emerald-200 border border-emerald-300/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] font-medium transition">
               Uji
             </button>
-            <button type="button" data-action="delete-map" data-index="${index}" class="px-2 py-1 rounded bg-rose-500/15 hover:bg-rose-500/25 text-[11px] text-rose-300 border border-rose-500/30 transition">
+            <button type="button" data-action="delete-map" data-index="${index}" class="px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-[11px] text-rose-200 border border-rose-300/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] transition">
               Hapus
             </button>
           </div>
@@ -2315,8 +2453,10 @@
     });
 
     btnResetDefaultMappings.addEventListener("click", () => {
-      localStorage.removeItem("qr_audio_mappings_v1");
-      localStorage.removeItem("qr_audio_custom_mappings_v2");
+      try {
+        localStorage.removeItem("qr_audio_mappings_v1");
+        localStorage.removeItem("qr_audio_custom_mappings_v2");
+      } catch (e) {}
       qrMappings = JSON.parse(JSON.stringify(INITIAL_QR_MAPPINGS));
       saveMappings();
       showToast("Pemetaan dikembalikan ke default repositori GitHub.", "info");
