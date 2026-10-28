@@ -351,24 +351,46 @@
               <h2 class="text-xs font-bold text-white">Daftar Kode QR &amp; Generator Uji Coba</h2>
               <p class="text-[11px] text-[#8B949E]">Klik <strong>QR</strong> untuk pratinjau kode, atau klik <strong>Uji</strong> untuk memutar audio.</p>
             </div>
-            <button id="btnResetDefaultMappings" type="button" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#0C0E11] hover:bg-slate-800 text-slate-300 border border-[#282F38] transition">
-              Reset Default
-            </button>
+            <div class="flex items-center gap-1.5">
+              <button id="btnExportGithubConfig" type="button" class="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-medium transition">
+                Salin JSON GitHub
+              </button>
+              <button id="btnResetDefaultMappings" type="button" class="text-[11px] px-2.5 py-1 rounded-lg bg-[#0C0E11] hover:bg-slate-800 text-slate-300 border border-[#282F38] transition">
+                Reset Default
+              </button>
+            </div>
           </div>
 
           <div id="mappingListContainer" class="space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
 
           <!-- Pratinjau Kode QR -->
-          <div id="qrPreviewCard" class="mt-3 pt-3 border-t border-[#282F38] flex items-center gap-3 bg-[#0C0E11] p-2.5 rounded-lg">
-            <div id="qrCanvasRender" class="bg-white p-1.5 rounded shrink-0"></div>
-            <div class="min-w-0">
-              <span class="text-[10px] font-semibold text-emerald-400">Pratinjau Kode QR</span>
-              <h4 id="qrPreviewTitle" class="text-xs font-bold text-white truncate">Pilih item di atas</h4>
-              <p id="qrPreviewCodeText" class="text-[11px] font-mono-code text-[#8B949E] truncate mt-0.5">-</p>
-              <p class="text-[11px] text-[#8B949E] mt-1 leading-tight">
-                Arahkan kamera ke kode QR ini untuk menguji pemutaran.
-              </p>
+          <div id="qrPreviewCard" class="mt-3 pt-3 border-t border-[#282F38] flex flex-col gap-2.5 bg-[#0C0E11] p-3 rounded-lg">
+            <div class="flex items-center justify-between gap-2 border-b border-[#282F38] pb-2">
+              <span class="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">Mode Kode QR</span>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                <input id="chkPortableQrMode" type="checkbox" checked class="rounded bg-[#1A1E24] border-[#282F38] text-emerald-500 focus:ring-0" />
+                <span class="text-[11px] font-medium text-slate-200">QR Mandiri (Bisa di Semua HP Tanpa Sinkronisasi)</span>
+              </label>
             </div>
+            <div class="flex items-center gap-3">
+              <div id="qrCanvasRender" class="bg-white p-1.5 rounded shrink-0"></div>
+              <div class="min-w-0 flex-1">
+                <h4 id="qrPreviewTitle" class="text-xs font-bold text-white truncate">Pilih item di atas</h4>
+                <p id="qrPreviewCodeText" class="text-[11px] font-mono-code text-[#8B949E] truncate mt-0.5">-</p>
+                <p id="qrPreviewSubHint" class="text-[11px] text-[#8B949E] mt-1 leading-tight">
+                  QR Mandiri menyertakan path/URL audio GitHub langsung di dalam QR agar perangkat lain langsung memutar audio.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info Singkat Sinkronisasi GitHub -->
+          <div class="mt-2.5 p-2.5 rounded-lg bg-[#0C0E11]/70 border border-[#282F38] text-[11px] text-[#8B949E] leading-relaxed">
+            <p class="font-semibold text-slate-300 mb-0.5">Agar Audio GitHub Berjalan di Perangkat Lain:</p>
+            <ul class="list-disc list-inside space-y-0.5">
+              <li>Taruh file audio di repo GitHub (contoh: <code class="text-emerald-300 font-mono-code">./audio/koleksi-01.mp3</code> atau link GitHub <code class="text-emerald-300 font-mono-code">github.com/.../blob/.../file.mp3</code>).</li>
+              <li>Gunakan <strong>QR Mandiri</strong> (otomatis menyimpan link audio di dalam QR) <em>atau</em> klik <strong>Salin JSON GitHub</strong> lalu simpan ke file <code class="text-amber-300 font-mono-code">qr-mappings.json</code> di repositori Anda.</li>
+            </ul>
           </div>
         </div>
 
@@ -509,11 +531,16 @@
     const btnLockAdmin = document.getElementById("btnLockAdmin");
     const btnBackToScanner = document.getElementById("btnBackToScanner");
     const btnCloseAdminPanel = document.getElementById("btnCloseAdminPanel");
+    const chkPortableQrMode = document.getElementById("chkPortableQrMode");
+    const btnExportGithubConfig = document.getElementById("btnExportGithubConfig");
+    const qrPreviewSubHint = document.getElementById("qrPreviewSubHint");
 
     let isAdminUnlocked = false;
     let cheatKeyBuffer = "";
     let logoTapCount = 0;
     let logoTapTimer = null;
+    let currentPreviewItem = null;
+    let isAudioUnlocked = false;
 
     // Pastikan opsi abaikan QR sama beruntun selalu false
     if (chkIgnoreDuplicate) {
@@ -523,20 +550,158 @@
     let scanHistory = [];
 
     // =========================================================================
-    // 3. STORAGE & INITIALIZATION
+    // 3. STORAGE, GITHUB URL RESOLVER & INITIALIZATION
     // =========================================================================
-    function loadMappings() {
+    /**
+     * Mengubah link GitHub biasa (blob) atau path relatif menjadi URL audio yang bisa di-stream
+     * di semua perangkat dari GitHub Pages / Raw GitHub.
+     */
+    function resolveGithubAudioUrl(rawUrl) {
+      const url = (rawUrl || "").trim();
+      if (!url) return "";
+
+      // Konversi otomatis URL halaman GitHub:
+      // https://github.com/user/repo/blob/branch/folder/audio.mp3 -> https://raw.githubusercontent.com/user/repo/branch/folder/audio.mp3
+      const githubBlobMatch = url.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/(?:blob|raw)\/([^/]+)\/(.+)$/i);
+      if (githubBlobMatch) {
+        const [, owner, repo, branch, filePath] = githubBlobMatch;
+        return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
+      }
+
+      // Jika sudah full URL (https://...) kembalikan langsung
+      if (/^https?:\/\//i.test(url)) {
+        return url;
+      }
+
+      // Jika berupa path relatif di repo GitHub Pages (mis. "./audio/pos1.mp3" atau "audio/pos1.mp3")
+      try {
+        return new URL(url, window.location.href).href;
+      } catch (e) {
+        return url;
+      }
+    }
+
+    /**
+     * Membuat payload QR Mandiri (Portable) agar saat QR dipindai di HP lain tanpa localStorage,
+     * HP tersebut tetap tahu URL audio GitHub, judul, atau teks narasinya.
+     */
+    function buildQrPayloadText(item) {
+      const usePortable = chkPortableQrMode ? chkPortableQrMode.checked : true;
+      if (!usePortable) {
+        return item.qrCode;
+      }
+
+      // Format ringkas QRA1|<id>|<mode>|<title>|<target>
+      const target =
+        item.mode === "url"
+          ? (item.audioUrl || "")
+          : item.mode === "tts"
+          ? (item.ttsText || item.title || "")
+          : (item.synthPreset || "chime");
+
+      return JSON.stringify({
+        qra: 1,
+        id: item.qrCode,
+        t: item.title,
+        m: item.mode,
+        u: target
+      });
+    }
+
+    /**
+     * Mem-parsing isi QR apakah berupa JSON QR Mandiri, URL/Path Audio langsung, atau ID QR biasa.
+     */
+    function parseScannedQrPayload(rawText) {
+      const code = (rawText || "").trim();
+      if (!code) return null;
+
+      // 1. Cek apakah QR berformat JSON Mandiri (Portable QR)
+      if (code.startsWith("{") && code.endsWith("}")) {
+        try {
+          const data = JSON.parse(code);
+          if (data && (data.qra === 1 || data.mode || data.audioUrl || data.u)) {
+            const mode = data.m || data.mode || "url";
+            const target = data.u || data.audioUrl || data.ttsText || data.synthPreset || "";
+            return {
+              qrCode: data.id || data.qrCode || "QR-PORTABLE",
+              title: data.t || data.title || "Audio QR",
+              mode: mode,
+              audioUrl: mode === "url" ? target : "",
+              ttsText: mode === "tts" ? target : "",
+              synthPreset: mode === "synth" ? (target || "chime") : "chime"
+            };
+          }
+        } catch (e) {}
+      }
+
+      // 2. Cek apakah QR memiliki query parameter ?qra=... atau ?audio=... (jika QR berupa link ke GitHub Pages)
+      if (/^https?:\/\//i.test(code)) {
+        try {
+          const parsedUrl = new URL(code);
+          const audioParam = parsedUrl.searchParams.get("audio");
+          const titleParam = parsedUrl.searchParams.get("title");
+          if (audioParam) {
+            return {
+              qrCode: audioParam,
+              title: titleParam || "Audio GitHub",
+              mode: "url",
+              audioUrl: audioParam,
+              ttsText: "",
+              synthPreset: "chime"
+            };
+          }
+        } catch (e) {}
+      }
+
+      return null;
+    }
+
+    function mergeMappingsList(baseList, incomingList) {
+      const map = new Map();
+      baseList.forEach((item) => {
+        if (item && item.qrCode) {
+          map.set(item.qrCode.toLowerCase(), item);
+        }
+      });
+      incomingList.forEach((item) => {
+        if (item && item.qrCode) {
+          map.set(item.qrCode.toLowerCase(), item);
+        }
+      });
+      return Array.from(map.values());
+    }
+
+    async function loadMappings() {
+      let baseMappings = JSON.parse(JSON.stringify(INITIAL_QR_MAPPINGS));
+
+      // 1. Coba muat file qr-mappings.json dari repositori GitHub (jika ada) agar tersinkronisasi di semua perangkat
+      try {
+        const res = await fetch("./qr-mappings.json?t=" + Date.now(), { cache: "no-store" });
+        if (res.ok) {
+          const remoteJson = await res.json();
+          if (Array.isArray(remoteJson) && remoteJson.length > 0) {
+            baseMappings = mergeMappingsList(baseMappings, remoteJson);
+          }
+        }
+      } catch (e) {
+        // Abaikan jika file qr-mappings.json belum dibuat di repo GitHub
+      }
+
+      // 2. Gabungkan dengan penyimpanan lokal perangkat ini (jika ada tambahan di perangkat ini)
       try {
         const saved = localStorage.getItem("qr_audio_mappings_v1");
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            qrMappings = parsed;
+            qrMappings = mergeMappingsList(baseMappings, parsed);
+            renderMappingUI();
             return;
           }
         }
       } catch (e) {}
-      qrMappings = JSON.parse(JSON.stringify(INITIAL_QR_MAPPINGS));
+
+      qrMappings = baseMappings;
+      renderMappingUI();
     }
 
     function saveMappings() {
@@ -573,7 +738,11 @@
       return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     }
 
-    // Unlock AudioContext saat interaksi pertama pengguna (penting di iOS/Android)
+    /**
+     * Membuka kunci (unlock) Web Audio API dan elemen <audio> HTML5 saat interaksi pengguna
+     * (misalnya klik "Aktifkan Kamera QR"), sehingga saat QR terdeteksi dari kamera,
+     * file MP3/WAV dari GitHub tidak diblokir oleh kebijakan Autoplay mobile browser.
+     */
     function unlockAudioEngine() {
       try {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -586,6 +755,32 @@
           }
         }
       } catch (e) {}
+
+      if (!isAudioUnlocked && htmlAudioPlayer && !isPlayingAudio) {
+        try {
+          // Putar silent WAV sangat pendek untuk membuka izin autoplay pada elemen <audio> di iOS/Android
+          const silentWav = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+          htmlAudioPlayer.muted = true;
+          htmlAudioPlayer.src = silentWav;
+          const p = htmlAudioPlayer.play();
+          if (p && typeof p.then === "function") {
+            p.then(() => {
+              htmlAudioPlayer.pause();
+              htmlAudioPlayer.currentTime = 0;
+              htmlAudioPlayer.muted = false;
+              htmlAudioPlayer.removeAttribute("src");
+              isAudioUnlocked = true;
+            }).catch(() => {
+              htmlAudioPlayer.muted = false;
+            });
+          } else {
+            htmlAudioPlayer.muted = false;
+            isAudioUnlocked = true;
+          }
+        } catch (e) {
+          htmlAudioPlayer.muted = false;
+        }
+      }
     }
 
     // =========================================================================
@@ -640,18 +835,28 @@
         return;
       }
 
-      let matched = qrMappings.find(
-        (item) => item.qrCode.toLowerCase() === code.toLowerCase()
-      );
+      // 1. Cek apakah QR yang dipindai adalah QR Mandiri (Portable JSON / Query Param)
+      let matched = parseScannedQrPayload(code);
 
+      // 2. Jika bukan QR Mandiri, cari di daftar pemetaan (qrMappings) berdasarkan ID
+      if (!matched) {
+        matched = qrMappings.find(
+          (item) => item.qrCode.toLowerCase() === code.toLowerCase()
+        );
+      }
+
+      // 3. Jika tidak ada di daftar, cek apakah isi QR adalah URL/Path file audio GitHub langsung
       if (!matched) {
         const isDirectAudioUrl =
-          /^https?:\/\/.+\.(mp3|wav|ogg|m4a)(\?.*)?$/i.test(code) ||
-          /^\.?\/?.+\.(mp3|wav|ogg|m4a)$/i.test(code);
+          /^https?:\/\/.+\.(mp3|wav|ogg|m4a|aac)(\?.*)?$/i.test(code) ||
+          /^https?:\/\/github\.com\/.+\/(?:blob|raw)\/.+\.(mp3|wav|ogg|m4a|aac)(\?.*)?$/i.test(code) ||
+          /^\.?\/?(?:audio\/)?.+\.(mp3|wav|ogg|m4a|aac)$/i.test(code);
+
         if (isDirectAudioUrl) {
+          const cleanName = code.split("/").pop().split("?")[0] || "Audio QR";
           matched = {
             qrCode: code,
-            title: "Audio QR",
+            title: `Audio: ${decodeURIComponent(cleanName)}`,
             mode: "url",
             audioUrl: code
           };
@@ -756,8 +961,11 @@
 
     // Volume diatur penuh oleh perangkat pengguna (1.0 pada web player)
     function playUrlAudio(url, historyId) {
+      const resolvedUrl = resolveGithubAudioUrl(url);
+      htmlAudioPlayer.muted = false;
       htmlAudioPlayer.volume = 1.0;
-      htmlAudioPlayer.src = url;
+      htmlAudioPlayer.crossOrigin = "anonymous";
+      htmlAudioPlayer.src = resolvedUrl;
 
       htmlAudioPlayer.onloadedmetadata = () => {
         audioDuration.textContent = formatSeconds(htmlAudioPlayer.duration);
@@ -777,11 +985,22 @@
       };
 
       htmlAudioPlayer.onerror = () => {
-        showToast("File audio tidak ditemukan, memutar nada cadangan.", "warn");
+        // Coba ulang tanpa crossOrigin jika server memblokir header CORS
+        if (htmlAudioPlayer.crossOrigin) {
+          htmlAudioPlayer.removeAttribute("crossOrigin");
+          htmlAudioPlayer.src = resolvedUrl;
+          htmlAudioPlayer.play().catch(() => {
+            showToast(`File audio tidak dapat dimuat (${url}), memutar nada cadangan.`, "warn");
+            playSynthSequence("chime", historyId);
+          });
+          return;
+        }
+        showToast(`File audio tidak ditemukan (${url}), memutar nada cadangan.`, "warn");
         playSynthSequence("chime", historyId);
       };
 
       htmlAudioPlayer.play().catch(() => {
+        showToast("Ketuk layar sekali jika peramban menahan pemutaran audio.", "warn");
         playSynthSequence("chime", historyId);
       });
     }
@@ -1151,20 +1370,58 @@
 
     function renderQrCodePreview(item) {
       if (!item || !qrCanvasRender) return;
+      currentPreviewItem = item;
       qrCanvasRender.innerHTML = "";
       qrPreviewTitle.textContent = item.title;
-      qrPreviewCodeText.textContent = `Isi QR: ${item.qrCode}`;
+
+      const payloadText = buildQrPayloadText(item);
+      const isPortable = chkPortableQrMode && chkPortableQrMode.checked;
+
+      qrPreviewCodeText.textContent = isPortable
+        ? `ID: ${item.qrCode} (Mode Mandiri Aktif)`
+        : `Isi QR: ${item.qrCode}`;
+
+      if (qrPreviewSubHint) {
+        qrPreviewSubHint.textContent = isPortable
+          ? "QR Mandiri menyertakan data/link audio langsung di dalam QR agar bisa dipindai di perangkat mana pun."
+          : "Mode ID Singkat: Pastikan daftar ini sudah disimpan ke INITIAL_QR_MAPPINGS atau qr-mappings.json di GitHub.";
+      }
 
       if (typeof QRCode === "function") {
         new QRCode(qrCanvasRender, {
-          text: item.qrCode,
-          width: 84,
-          height: 84,
+          text: payloadText,
+          width: 96,
+          height: 96,
           colorDark: "#020617",
           colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.M
+          correctLevel: QRCode.CorrectLevel.L
         });
       }
+    }
+
+    if (chkPortableQrMode) {
+      chkPortableQrMode.addEventListener("change", () => {
+        if (currentPreviewItem) {
+          renderQrCodePreview(currentPreviewItem);
+        }
+      });
+    }
+
+    if (btnExportGithubConfig) {
+      btnExportGithubConfig.addEventListener("click", () => {
+        const jsonText = JSON.stringify(qrMappings, null, 2);
+        const tempArea = document.createElement("textarea");
+        tempArea.value = jsonText;
+        document.body.appendChild(tempArea);
+        tempArea.select();
+        try {
+          document.execCommand("copy");
+          showToast("JSON disalin! Simpan ke qr-mappings.json atau INITIAL_QR_MAPPINGS di GitHub.", "success");
+        } catch (err) {
+          showToast("Gagal menyalin JSON secara otomatis.", "warn");
+        }
+        tempArea.remove();
+      });
     }
 
     function renderMappingUI() {
@@ -1302,7 +1559,17 @@
     window.addEventListener("DOMContentLoaded", () => {
       chkIgnoreDuplicate.checked = false;
       loadMappings();
-      renderMappingUI();
+
+      // Cek apakah halaman dibuka dengan parameter URL langsung (?qr=... atau ?audio=...)
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const qrParam = params.get("qr") || params.get("audio");
+        if (qrParam) {
+          setTimeout(() => {
+            handleDetectedQrCode(qrParam, "Link QR");
+          }, 400);
+        }
+      } catch (e) {}
     });
   </script>
 </body>
