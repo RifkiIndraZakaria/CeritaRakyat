@@ -14,8 +14,8 @@
       --bg-panel: #1A1E24;
       --bg-bay: #0C0E11;
       --border-hairline: #282F38;
-      --accent-ready: #0E9F6E;
-      --accent-locked: #E07A2E;
+      --accent-ready: #10B981;
+      --accent-locked: #F59E0B;
       --text-main: #E6EDF3;
       --text-muted: #8B949E;
     }
@@ -51,364 +51,247 @@
     .eq-bar-4 { animation: eq-bar 0.55s ease-in-out infinite 0.08s; }
     .eq-bar-5 { animation: eq-bar 0.7s ease-in-out infinite 0.2s; }
 
-    /* Compact custom scrollbar */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: #121518; }
     ::-webkit-scrollbar-thumb { background: #282F38; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #3b4452; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-emerald-500/30 selection:text-emerald-200">
+<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500/30 selection:text-emerald-200">
 
   <!-- Toast Notification -->
   <div id="toastContainer" class="fixed top-3 right-3 z-50 flex flex-col gap-1.5 max-w-xs w-full pointer-events-none px-3 sm:px-0"></div>
 
-  <!-- Compact Instrument Top Bar -->
+  <!-- Minimal Clean Header -->
   <header class="border-b border-[#282F38] bg-[#161A20]/90 backdrop-blur sticky top-0 z-30">
-    <div class="max-w-4xl mx-auto px-3 py-2 flex flex-wrap items-center justify-between gap-2">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-2">
       <div class="flex items-center gap-2.5">
-        <div class="w-7 h-7 rounded-md bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+        <div class="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2M7 7h3v3H7V7zm7 0h3v3h-3V7zM7 14h3v3H7v-3zm7 3h3v-3h-3v3z" />
           </svg>
         </div>
-        <div class="flex items-baseline gap-2">
-          <h1 class="text-sm font-bold tracking-tight text-white">QR Audio Scanner</h1>
-          <span class="hidden sm:inline-block text-[11px] font-mono-code text-[#8B949E]">GitHub Pages Ready</span>
-        </div>
+        <h1 class="text-sm font-bold tracking-tight text-white">QR Audio Scanner</h1>
       </div>
 
-      <!-- Compact Segmented Navigation -->
-      <nav class="flex items-center gap-0.5 bg-[#0C0E11] p-0.5 rounded-lg border border-[#282F38]">
-        <button id="tabBtnScanner" type="button" class="px-2.5 py-1 rounded-md text-xs font-semibold transition bg-[#1A1E24] text-emerald-400 border border-[#282F38]">
-          Pemindai &amp; Audio
-        </button>
-        <button id="tabBtnMapping" type="button" class="px-2.5 py-1 rounded-md text-xs font-medium transition text-[#8B949E] hover:text-white">
-          Daftar QR &amp; Uji Coba
-        </button>
-        <button id="tabBtnGuide" type="button" class="px-2.5 py-1 rounded-md text-xs font-medium transition text-[#8B949E] hover:text-white">
-          Panduan GitHub Pages
-        </button>
+      <!-- Status Indicator -->
+      <div class="flex items-center gap-1.5 bg-[#0C0E11] px-2.5 py-1 rounded-full border border-[#282F38]">
+        <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+        <span id="statusBadgeText" class="text-[11px] font-semibold text-emerald-400 truncate">Siap Scan</span>
+      </div>
+
+      <!-- Disembunyikan sesuai permintaan: Menu Daftar QR & Panduan GitHub Pages -->
+      <nav class="hidden">
+        <button id="tabBtnScanner" type="button">Pemindai &amp; Audio</button>
+        <button id="tabBtnMapping" type="button">Daftar QR &amp; Uji Coba</button>
+        <button id="tabBtnGuide" type="button">Panduan GitHub Pages</button>
       </nav>
     </div>
   </header>
 
-  <!-- Compact Main Console -->
-  <main class="flex-1 max-w-4xl w-full mx-auto px-3 py-3">
+  <!-- Single Focused Main Console -->
+  <main class="flex-1 flex flex-col justify-center max-w-md w-full mx-auto px-4 py-5">
 
-    <!-- TAB 1: SCANNER & PLAYER CONSOLE -->
-    <section id="viewScanner" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
+    <!-- SCANNER & SIMPLE AUDIO PLAYER -->
+    <section id="viewScanner" class="flex flex-col gap-3.5 w-full">
 
-      <!-- Left Column: Compact Optical Scanner & Quick Triggers (7 cols) -->
-      <div class="md:col-span-7 flex flex-col gap-2.5">
-        <div class="bg-[#1A1E24] border border-[#282F38] rounded-lg p-3">
-          <!-- Inline Status Strip -->
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <div class="flex items-center gap-2 min-w-0">
-              <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
-              <span id="statusBadgeText" class="text-xs font-semibold text-emerald-400 truncate">Siap memindai kode QR</span>
-            </div>
-            <span id="lockIndicator" class="hidden text-[11px] font-medium px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30 shrink-0">
-              Scan dikunci sementara
+      <!-- Optical Scanner Card -->
+      <div class="bg-[#1A1E24] border border-[#282F38] rounded-xl p-3.5 shadow-xl">
+        <!-- Viewport Top Bar: Title + Icon-only Controls -->
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold text-slate-200">Pemindai Kamera QR</span>
+            <span id="lockIndicator" class="hidden text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">
+              Terkunci
             </span>
           </div>
 
-          <!-- Compact Camera Viewport -->
-          <div class="relative w-full h-52 sm:h-60 bg-[#0C0E11] rounded-md overflow-hidden border border-[#282F38] flex items-center justify-center">
-            <video id="cameraVideo" class="w-full h-full object-cover hidden" playsinline muted></video>
-            <canvas id="cameraCanvas" class="hidden"></canvas>
+          <!-- Icon-Only Action Buttons (Ganti Kamera & Gambar QR) -->
+          <div class="flex items-center gap-1.5">
+            <!-- Hidden Mulai Kamera button (aktivasi hanya lewat tombol di tengah kotak kamera) -->
+            <button id="btnToggleCamera" type="button" class="hidden">
+              <span id="btnToggleCameraLabel">Mulai Kamera</span>
+            </button>
 
-            <!-- Idle Placeholder -->
-            <div id="cameraPlaceholder" class="flex flex-col items-center justify-center text-center p-4 max-w-xs">
-              <div class="w-9 h-9 rounded-lg bg-[#1A1E24] border border-[#282F38] flex items-center justify-center text-[#8B949E] mb-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <p class="text-xs font-semibold text-white mb-0.5">Kamera Belum Aktif</p>
-              <p class="text-[11px] text-[#8B949E] mb-3 leading-snug">
-                Aktifkan kamera, unggah gambar QR, atau klik tombol simulasi di bawah.
-              </p>
-              <button id="btnStartCameraCenter" type="button" class="px-3 py-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs transition flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Aktifkan Kamera QR
-              </button>
-            </div>
+            <!-- Ganti Kamera (Icon Only) -->
+            <button
+              id="btnSwitchFacing"
+              type="button"
+              title="Ganti Kamera (Depan/Belakang)"
+              aria-label="Ganti Kamera"
+              class="w-8 h-8 rounded-lg bg-[#0C0E11] hover:bg-slate-800 text-slate-300 hover:text-white transition border border-[#282F38] flex items-center justify-center"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
 
-            <!-- Active Scanning Reticle -->
-            <div id="scanGuideOverlay" class="hidden inset-0 pointer-events-none absolute flex items-center justify-center">
-              <div class="w-40 h-40 relative border border-emerald-400/35 rounded-lg">
-                <div class="-top-0.5 -left-0.5 w-4 h-4 border-t-2 border-l-2 border-emerald-400 rounded-tl absolute"></div>
-                <div class="-top-0.5 -right-0.5 w-4 h-4 border-t-2 border-r-2 border-emerald-400 rounded-tr absolute"></div>
-                <div class="-bottom-0.5 -left-0.5 w-4 h-4 border-b-2 border-l-2 border-emerald-400 rounded-bl absolute"></div>
-                <div class="-bottom-0.5 -right-0.5 w-4 h-4 border-b-2 border-r-2 border-emerald-400 rounded-br absolute"></div>
-                <div class="scan-laser"></div>
-              </div>
-            </div>
-
-            <!-- Audio Playing Lock Overlay -->
-            <div id="playingLockOverlay" class="hidden absolute inset-0 bg-[#0C0E11]/90 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center z-20">
-              <div class="flex items-end gap-1 h-7 mb-2">
-                <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-1"></span>
-                <span class="w-1.5 h-6 bg-emerald-400 rounded-full eq-bar-2"></span>
-                <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-3"></span>
-                <span class="w-1.5 h-6 bg-emerald-400 rounded-full eq-bar-4"></span>
-                <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-5"></span>
-              </div>
-              <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-1">
-                Menunggu Audio Selesai
-              </span>
-              <h3 id="overlayTrackTitle" class="text-sm font-bold text-white mb-0.5 truncate max-w-xs">Memutar Audio...</h3>
-              <p id="overlayQrValue" class="text-[11px] text-slate-300 font-mono-code bg-[#1A1E24] px-2 py-0.5 rounded border border-[#282F38] mb-1.5 max-w-xs truncate">QR: -</p>
-              <p class="text-[11px] text-[#8B949E] max-w-xs leading-tight">
-                Pemindai dikunci otomatis dan aktif kembali tepat setelah audio selesai.
-              </p>
-            </div>
-          </div>
-
-          <!-- Compact Control Bar -->
-          <div class="mt-2.5 flex flex-wrap items-center justify-between gap-1.5">
-            <div class="flex flex-wrap items-center gap-1.5">
-              <button id="btnToggleCamera" type="button" class="px-2.5 py-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs transition flex items-center gap-1.5">
-                <span id="btnToggleCameraLabel">Mulai Kamera</span>
-              </button>
-              <button id="btnSwitchFacing" type="button" class="px-2.5 py-1.5 rounded-md bg-[#0C0E11] hover:bg-slate-800 text-slate-200 text-xs font-medium transition border border-[#282F38]">
-                Ganti Kamera (Depan/Belakang)
-              </button>
-              <label for="qrFileInput" class="cursor-pointer px-2.5 py-1.5 rounded-md bg-[#0C0E11] hover:bg-slate-800 text-slate-200 text-xs font-medium transition border border-[#282F38] inline-flex items-center gap-1">
-                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 0L8 8m4-4l4 4" />
-                </svg>
-                Gambar QR
-              </label>
-              <input id="qrFileInput" type="file" accept="image/*" class="hidden" />
-            </div>
-
-            <label class="inline-flex items-center gap-1.5 text-[11px] text-[#8B949E] cursor-pointer select-none">
-              <input id="chkIgnoreDuplicate" type="checkbox" class="rounded border-[#282F38] bg-[#0C0E11] text-emerald-500 focus:ring-0 w-3.5 h-3.5" />
-              <span>Abaikan QR sama beruntun</span>
+            <!-- Unggah Gambar QR (Icon Only) -->
+            <label
+              for="qrFileInput"
+              title="Unggah Gambar QR"
+              aria-label="Unggah Gambar QR"
+              class="cursor-pointer w-8 h-8 rounded-lg bg-[#0C0E11] hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 transition border border-[#282F38] flex items-center justify-center"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
             </label>
+            <input id="qrFileInput" type="file" accept="image/*" class="hidden" />
           </div>
         </div>
 
-        <!-- Compact Quick Simulation Strip -->
-        <div class="bg-[#1A1E24] border border-[#282F38] rounded-lg p-3">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <h3 class="text-xs font-semibold text-white">Simulasi Scan Cepat (Tanpa Kamera)</h3>
-            <span class="text-[11px] text-[#8B949E]">Klik untuk uji penguncian audio</span>
+        <!-- Camera Viewport Box -->
+        <div class="relative w-full aspect-square max-h-72 bg-[#0C0E11] rounded-lg overflow-hidden border border-[#282F38] flex items-center justify-center">
+          <video id="cameraVideo" class="w-full h-full object-cover hidden" playsinline muted></video>
+          <canvas id="cameraCanvas" class="hidden"></canvas>
+
+          <!-- Idle Placeholder with "Aktifkan Kamera QR" Button -->
+          <div id="cameraPlaceholder" class="flex flex-col items-center justify-center text-center p-5 max-w-xs">
+            <div class="w-11 h-11 rounded-xl bg-[#1A1E24] border border-[#282F38] flex items-center justify-center text-emerald-400 mb-3">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <p class="text-xs font-semibold text-white mb-1">Kamera Belum Aktif</p>
+            <p class="text-[11px] text-[#8B949E] mb-4 leading-relaxed">
+              Sentuh tombol di bawah untuk mengaktifkan kamera pemindai QR.
+            </p>
+            <button id="btnStartCameraCenter" type="button" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-[0.99] text-slate-950 font-semibold text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-500/10">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              Aktifkan Kamera QR
+            </button>
           </div>
-          <div id="quickPresetButtons" class="grid grid-cols-2 gap-1.5"></div>
-        </div>
-      </div>
 
-      <!-- Right Column: Audio Deck & Compact Scan Log (5 cols) -->
-      <div class="md:col-span-5 flex flex-col gap-2.5">
+          <!-- Active Scanning Reticle -->
+          <div id="scanGuideOverlay" class="hidden inset-0 pointer-events-none absolute flex items-center justify-center">
+            <div class="w-44 h-44 relative border border-emerald-400/35 rounded-xl">
+              <div class="-top-0.5 -left-0.5 w-4 h-4 border-t-2 border-l-2 border-emerald-400 rounded-tl absolute"></div>
+              <div class="-top-0.5 -right-0.5 w-4 h-4 border-t-2 border-r-2 border-emerald-400 rounded-tr absolute"></div>
+              <div class="-bottom-0.5 -left-0.5 w-4 h-4 border-b-2 border-l-2 border-emerald-400 rounded-bl absolute"></div>
+              <div class="-bottom-0.5 -right-0.5 w-4 h-4 border-b-2 border-r-2 border-emerald-400 rounded-br absolute"></div>
+              <div class="scan-laser"></div>
+            </div>
+          </div>
 
-        <!-- Compact Audio Transport Deck -->
-        <div class="bg-[#1A1E24] border border-[#282F38] rounded-lg p-3">
-          <div class="flex items-center justify-between mb-2">
-            <h2 class="text-xs font-semibold text-[#8B949E]">Dek Pemutar Audio</h2>
-            <span id="playerStatePill" class="text-[11px] font-semibold px-2 py-0.5 rounded bg-[#0C0E11] text-slate-300 border border-[#282F38]">
-              Menunggu Scan
+          <!-- Audio Playing Lock Overlay -->
+          <div id="playingLockOverlay" class="hidden absolute inset-0 bg-[#0C0E11]/90 backdrop-blur-sm flex flex-col items-center justify-center p-5 text-center z-20">
+            <div class="flex items-end gap-1 h-7 mb-2.5">
+              <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-1"></span>
+              <span class="w-1.5 h-6 bg-emerald-400 rounded-full eq-bar-2"></span>
+              <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-3"></span>
+              <span class="w-1.5 h-6 bg-emerald-400 rounded-full eq-bar-4"></span>
+              <span class="w-1.5 h-6 bg-amber-400 rounded-full eq-bar-5"></span>
+            </div>
+            <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-1.5">
+              Sedang Memutar Audio
             </span>
-          </div>
-
-          <div class="bg-[#0C0E11] border border-[#282F38] rounded-md p-2.5 mb-2.5">
-            <div class="flex items-start justify-between gap-2 mb-1.5">
-              <div class="min-w-0">
-                <h3 id="nowPlayingTitle" class="text-xs font-bold text-white truncate">Belum ada QR yang dipindai</h3>
-              </div>
-              <span id="nowPlayingType" class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-[#1A1E24] text-emerald-300 border border-[#282F38] shrink-0">
-                -
-              </span>
-            </div>
-
-            <div class="flex items-center gap-1.5 mb-2">
-              <span class="text-[11px] text-[#8B949E] shrink-0">QR:</span>
-              <div id="nowPlayingQrCode" class="text-[11px] font-mono-code bg-[#1A1E24] text-emerald-300 px-2 py-0.5 rounded border border-[#282F38] truncate flex-1">
-                -
-              </div>
-            </div>
-
-            <!-- Compact Progress Bar -->
-            <div>
-              <div class="flex justify-between text-[11px] font-mono-code text-[#8B949E] mb-1">
-                <span id="audioCurrentTime">00:00</span>
-                <span id="audioDuration">00:00</span>
-              </div>
-              <div class="w-full h-1.5 bg-[#1A1E24] rounded-full overflow-hidden">
-                <div id="audioProgressBar" class="h-full bg-emerald-500 transition-all duration-150" style="width: 0%"></div>
-              </div>
-            </div>
-
-            <p id="lockExplanationText" class="text-[11px] text-[#8B949E] mt-2 leading-snug">
-              Saat QR terbaca, pembacaan QR baru dikunci hingga audio 100% selesai.
+            <h3 id="overlayTrackTitle" class="text-sm font-bold text-white mb-1 truncate max-w-xs">Memutar Audio...</h3>
+            <p id="overlayQrValue" class="hidden">QR: -</p>
+            <p class="text-[11px] text-[#8B949E] max-w-xs leading-snug">
+              Pemindai akan aktif kembali otomatis setelah audio selesai.
             </p>
           </div>
-
-          <audio id="htmlAudioPlayer" preload="auto" class="hidden"></audio>
-
-          <!-- Compact Transport Controls -->
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-1.5">
-              <label for="volumeSlider" class="text-[11px] text-[#8B949E]">Vol</label>
-              <input id="volumeSlider" type="range" min="0" max="1" step="0.05" value="0.9" class="w-20 accent-emerald-500 cursor-pointer h-1.5" />
-            </div>
-            <button id="btnForceStopAudio" type="button" disabled class="px-2.5 py-1 rounded-md bg-rose-500/15 hover:bg-rose-500/25 disabled:opacity-40 disabled:pointer-events-none text-rose-300 border border-rose-500/30 text-[11px] font-semibold transition">
-              Hentikan Darurat &amp; Buka Kunci QR
-            </button>
-          </div>
         </div>
 
-        <!-- Compact Scan History Log -->
-        <div class="bg-[#1A1E24] border border-[#282F38] rounded-lg p-3 flex-1 flex flex-col">
-          <div class="flex items-center justify-between mb-2">
-            <h2 class="text-xs font-semibold text-white">Riwayat Scan QR</h2>
-            <button id="btnClearHistory" type="button" class="text-[11px] text-[#8B949E] hover:text-rose-400 transition">
-              Bersihkan
-            </button>
-          </div>
-          <div id="scanHistoryList" class="space-y-1.5 max-h-44 overflow-y-auto pr-1 text-xs">
-            <div class="text-[#8B949E] text-center py-4 border border-dashed border-[#282F38] rounded-md text-[11px]">
-              Belum ada aktivitas scan QR.
-            </div>
-          </div>
-        </div>
-
+        <!-- Opsi Abaikan QR Sama Beruntun: Selalu false dan disembunyikan -->
+        <label class="hidden">
+          <input id="chkIgnoreDuplicate" type="checkbox" />
+          <span>Abaikan QR sama beruntun</span>
+        </label>
       </div>
-    </section>
 
-    <!-- TAB 2: COMPACT QR MAPPING & GENERATOR -->
-    <section id="viewMapping" class="hidden">
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
-
-        <!-- Add / Edit QR Audio Mapping (5 cols) -->
-        <div class="md:col-span-5 bg-[#1A1E24] border border-[#282F38] rounded-lg p-3.5">
-          <h2 class="text-xs font-bold text-white mb-1">Tambah Pemetaan QR ke Audio</h2>
-          <p class="text-[11px] text-[#8B949E] mb-3 leading-snug">
-            Hubungkan kode QR dengan URL file audio (<code class="text-emerald-300 font-mono-code">.mp3/.wav</code>), narasi suara, atau nada sintetis. QR berisi URL langsung ke file audio juga otomatis diputar.
-          </p>
-
-          <form id="formAddMapping" class="space-y-2.5">
-            <div>
-              <label for="inputQrKey" class="block text-[11px] font-medium text-slate-300 mb-1">Isi Teks / ID Kode QR</label>
-              <input id="inputQrKey" type="text" required placeholder="Contoh: KOLEKSI-01" class="w-full px-2.5 py-1.5 rounded-md bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500" />
-            </div>
-
-            <div>
-              <label for="inputAudioTitle" class="block text-[11px] font-medium text-slate-300 mb-1">Judul / Nama Audio</label>
-              <input id="inputAudioTitle" type="text" required placeholder="Contoh: Penjelasan Ruang Utama" class="w-full px-2.5 py-1.5 rounded-md bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500" />
-            </div>
-
-            <div>
-              <label for="selectAudioMode" class="block text-[11px] font-medium text-slate-300 mb-1">Sumber Audio</label>
-              <select id="selectAudioMode" class="w-full px-2.5 py-1.5 rounded-md bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500">
-                <option value="url">URL File Audio (.mp3 / .wav / .ogg)</option>
-                <option value="tts">Suara Narasi (Text-to-Speech ID)</option>
-                <option value="synth">Melodi Synthesizer (Web Audio API)</option>
-              </select>
-            </div>
-
-            <div id="fieldContainerUrl">
-              <label for="inputAudioUrl" class="block text-[11px] font-medium text-slate-300 mb-1">URL / Path File Audio</label>
-              <input id="inputAudioUrl" type="text" placeholder="./audio/koleksi-01.mp3" class="w-full px-2.5 py-1.5 rounded-md bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500" />
-            </div>
-
-            <div id="fieldContainerTts" class="hidden">
-              <label for="inputTtsText" class="block text-[11px] font-medium text-slate-300 mb-1">Kalimat Narasi</label>
-              <textarea id="inputTtsText" rows="2" placeholder="Teks yang akan dibacakan sampai selesai..." class="w-full px-2.5 py-1.5 rounded-md bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500"></textarea>
-            </div>
-
-            <div id="fieldContainerSynth" class="hidden">
-              <label for="selectSynthPreset" class="block text-[11px] font-medium text-slate-300 mb-1">Pilih Melodi Nada</label>
-              <select id="selectSynthPreset" class="w-full px-2.5 py-1.5 rounded-md bg-[#0C0E11] border border-[#282F38] text-xs text-white focus:outline-none focus:border-emerald-500">
-                <option value="chime">Chime Harmoni Penyambutan (5d)</option>
-                <option value="fanfare">Fanfare Sukses Checkpoint (6d)</option>
-                <option value="ambient">Ambient Museum Sci-Fi (7d)</option>
-              </select>
-            </div>
-
-            <button type="submit" class="w-full py-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs transition">
-              Simpan Pemetaan QR
-            </button>
-          </form>
+      <!-- Simple Audio Player Deck (Hanya Nama Audio & Panjang/Durasi Audio) -->
+      <div class="bg-[#1A1E24] border border-[#282F38] rounded-xl p-3.5 shadow-xl">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <span class="text-[11px] font-medium text-[#8B949E] uppercase tracking-wider">Audio</span>
+          <span id="playerStatePill" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#0C0E11] text-slate-300 border border-[#282F38]">
+            Menunggu Scan
+          </span>
         </div>
 
-        <!-- Registered QR List & Compact QR Generator (7 cols) -->
-        <div class="md:col-span-7 bg-[#1A1E24] border border-[#282F38] rounded-lg p-3.5 flex flex-col">
-          <div class="flex items-center justify-between gap-2 mb-2.5">
-            <div>
-              <h2 class="text-xs font-bold text-white">Daftar Kode QR &amp; Generator Uji Coba</h2>
-              <p class="text-[11px] text-[#8B949E]">Klik <strong>QR</strong> untuk memindai dari HP lain, atau klik <strong>Uji</strong>.</p>
-            </div>
-            <button id="btnResetDefaultMappings" type="button" class="text-[11px] px-2.5 py-1 rounded bg-[#0C0E11] hover:bg-slate-800 text-slate-300 border border-[#282F38] transition">
-              Reset ke Default
-            </button>
+        <div class="bg-[#0C0E11] border border-[#282F38] rounded-lg p-3">
+          <!-- Nama Audio -->
+          <div class="mb-2.5">
+            <h3 id="nowPlayingTitle" class="text-xs font-bold text-white truncate">Belum ada audio yang diputar</h3>
+            <!-- Elemen teknis disembunyikan agar tetap kompatibel dengan state -->
+            <span id="nowPlayingType" class="hidden">-</span>
+            <div id="nowPlayingQrCode" class="hidden">-</div>
           </div>
 
-          <div id="mappingListContainer" class="space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
-
-          <!-- Compact QR Preview Strip -->
-          <div id="qrPreviewCard" class="mt-3 pt-3 border-t border-[#282F38] flex items-center gap-3 bg-[#0C0E11] p-2.5 rounded-md">
-            <div id="qrCanvasRender" class="bg-white p-1.5 rounded shrink-0"></div>
-            <div class="min-w-0">
-              <span class="text-[10px] font-semibold text-emerald-400">Pratinjau Kode QR</span>
-              <h4 id="qrPreviewTitle" class="text-xs font-bold text-white truncate">Pilih item di atas</h4>
-              <p id="qrPreviewCodeText" class="text-[11px] font-mono-code text-[#8B949E] truncate mt-0.5">-</p>
-              <p class="text-[11px] text-[#8B949E] mt-1 leading-tight">
-                Arahkan kamera ke kode QR ini untuk menguji pemutaran.
-              </p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- TAB 3: COMPACT GITHUB PAGES GUIDE -->
-    <section id="viewGuide" class="hidden">
-      <div class="bg-[#1A1E24] border border-[#282F38] rounded-lg p-4 space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#282F38] pb-2.5">
+          <!-- Panjang Audio & Progress Bar -->
           <div>
-            <h2 class="text-sm font-bold text-white">Panduan Hosting GitHub Pages</h2>
-            <p class="text-[11px] text-[#8B949E]">Satu file HTML mandiri, mendukung akses kamera HTTPS di GitHub Pages.</p>
+            <div class="flex justify-between text-[11px] font-mono-code text-[#8B949E] mb-1.5">
+              <span id="audioCurrentTime">00:00</span>
+              <span id="audioDuration">00:00</span>
+            </div>
+            <div class="w-full h-1.5 bg-[#1A1E24] rounded-full overflow-hidden">
+              <div id="audioProgressBar" class="h-full bg-emerald-500 transition-all duration-150" style="width: 0%"></div>
+            </div>
           </div>
-          <button id="btnCopyConfigJson" type="button" class="px-3 py-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs transition">
-            Salin JSON Pemetaan Saat Ini
-          </button>
+
+          <p id="lockExplanationText" class="hidden"></p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-          <div class="bg-[#0C0E11] border border-[#282F38] p-3 rounded-md">
-            <h3 class="text-xs font-bold text-emerald-400 mb-1">1. Unggah File</h3>
-            <p class="text-[11px] text-[#8B949E] leading-relaxed">
-              Simpan file ini sebagai <code class="text-slate-200 font-mono-code">index.html</code> di repository GitHub bersama folder <code class="text-slate-200 font-mono-code">audio/</code> berisi file <code class="text-slate-200 font-mono-code">.mp3</code>.
-            </p>
-          </div>
+        <audio id="htmlAudioPlayer" preload="auto" class="hidden"></audio>
 
-          <div class="bg-[#0C0E11] border border-[#282F38] p-3 rounded-md">
-            <h3 class="text-xs font-bold text-emerald-400 mb-1">2. Aktifkan Pages</h3>
-            <p class="text-[11px] text-[#8B949E] leading-relaxed">
-              Buka <strong>Settings &rarr; Pages</strong>, pilih branch <strong>main / root</strong> lalu simpan. Domain HTTPS otomatis mengizinkan kamera.
-            </p>
-          </div>
-
-          <div class="bg-[#0C0E11] border border-[#282F38] p-3 rounded-md">
-            <h3 class="text-xs font-bold text-emerald-400 mb-1">3. Cara Kerja QR</h3>
-            <p class="text-[11px] text-[#8B949E] leading-relaxed">
-              Bisa memindai ID terdaftar (<code class="text-slate-200 font-mono-code">QR-AUDIO-01</code>) maupun URL langsung (<code class="text-slate-200 font-mono-code">https://.../pos1.mp3</code>).
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="text-xs font-semibold text-white mb-1.5">Konfigurasi Pemetaan (<code class="text-emerald-400 font-mono-code">INITIAL_QR_MAPPINGS</code>)</h3>
-          <pre id="jsonConfigPreview" class="bg-[#0C0E11] border border-[#282F38] rounded-md p-2.5 text-[11px] font-mono-code text-emerald-300 overflow-x-auto max-h-44"></pre>
+        <!-- Pengaturan volume web & kontrol darurat disembunyikan (Volume diatur langsung dari perangkat user) -->
+        <div class="hidden">
+          <input id="volumeSlider" type="range" min="0" max="1" step="0.05" value="1" />
+          <button id="btnForceStopAudio" type="button" disabled>Hentikan</button>
         </div>
       </div>
+
+      <!-- Disembunyikan sesuai permintaan: Simulasi Scan Cepat -->
+      <div class="hidden">
+        <div id="quickPresetButtons"></div>
+      </div>
+
+      <!-- Disembunyikan sesuai permintaan: Riwayat Scan QR -->
+      <div class="hidden">
+        <button id="btnClearHistory" type="button">Bersihkan</button>
+        <div id="scanHistoryList"></div>
+      </div>
+
+    </section>
+
+    <!-- Disembunyikan sesuai permintaan: TAB 2 (Daftar QR & Uji Coba) -->
+    <section id="viewMapping" class="hidden">
+      <form id="formAddMapping">
+        <input id="inputQrKey" type="text" />
+        <input id="inputAudioTitle" type="text" />
+        <select id="selectAudioMode">
+          <option value="url">URL</option>
+          <option value="tts">TTS</option>
+          <option value="synth">Synth</option>
+        </select>
+        <div id="fieldContainerUrl"><input id="inputAudioUrl" type="text" /></div>
+        <div id="fieldContainerTts" class="hidden"><textarea id="inputTtsText"></textarea></div>
+        <div id="fieldContainerSynth" class="hidden">
+          <select id="selectSynthPreset">
+            <option value="chime">Chime</option>
+            <option value="fanfare">Fanfare</option>
+            <option value="ambient">Ambient</option>
+          </select>
+        </div>
+      </form>
+      <button id="btnResetDefaultMappings" type="button"></button>
+      <div id="mappingListContainer"></div>
+      <div id="qrPreviewCard">
+        <div id="qrCanvasRender"></div>
+        <h4 id="qrPreviewTitle"></h4>
+        <p id="qrPreviewCodeText"></p>
+      </div>
+    </section>
+
+    <!-- Disembunyikan sesuai permintaan: TAB 3 (Panduan GitHub Pages) -->
+    <section id="viewGuide" class="hidden">
+      <button id="btnCopyConfigJson" type="button"></button>
+      <pre id="jsonConfigPreview"></pre>
     </section>
 
   </main>
@@ -506,7 +389,6 @@
     const audioProgressBar = document.getElementById("audioProgressBar");
     const lockExplanationText = document.getElementById("lockExplanationText");
     const htmlAudioPlayer = document.getElementById("htmlAudioPlayer");
-    const volumeSlider = document.getElementById("volumeSlider");
     const btnForceStopAudio = document.getElementById("btnForceStopAudio");
 
     const scanHistoryList = document.getElementById("scanHistoryList");
@@ -530,6 +412,11 @@
     const qrPreviewCodeText = document.getElementById("qrPreviewCodeText");
     const jsonConfigPreview = document.getElementById("jsonConfigPreview");
     const btnCopyConfigJson = document.getElementById("btnCopyConfigJson");
+
+    // Pastikan opsi abaikan QR sama beruntun selalu false
+    if (chkIgnoreDuplicate) {
+      chkIgnoreDuplicate.checked = false;
+    }
 
     let scanHistory = [];
 
@@ -567,14 +454,14 @@
           ? "bg-amber-950/95 border-amber-500/40 text-amber-200"
           : "bg-[#1A1E24]/95 border-[#282F38] text-slate-200";
 
-      toast.className = `pointer-events-auto border px-3 py-2 rounded-md shadow-lg text-[11px] font-medium transition-all duration-300 ${colorClasses}`;
+      toast.className = `pointer-events-auto border px-3 py-2 rounded-lg shadow-lg text-[11px] font-medium transition-all duration-300 ${colorClasses}`;
       toast.textContent = message;
       container.appendChild(toast);
 
       setTimeout(() => {
         toast.style.opacity = "0";
         setTimeout(() => toast.remove(), 250);
-      }, 2800);
+      }, 2600);
     }
 
     function formatSeconds(sec) {
@@ -592,47 +479,41 @@
 
       if (locked && trackInfo) {
         statusDot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping shrink-0";
-        statusBadgeText.textContent = "Audio diputar (Scan dikunci)";
-        statusBadgeText.className = "text-xs font-semibold text-amber-300 truncate";
+        statusBadgeText.textContent = "Memutar Audio";
+        statusBadgeText.className = "text-[11px] font-semibold text-amber-300 truncate";
         lockIndicator.classList.remove("hidden");
         playingLockOverlay.classList.remove("hidden");
         overlayTrackTitle.textContent = trackInfo.title;
         overlayQrValue.textContent = `QR: ${trackInfo.qrCode}`;
 
-        playerStatePill.textContent = "Memutar Audio";
-        playerStatePill.className = "text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30";
+        playerStatePill.textContent = "Diputar";
+        playerStatePill.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30";
         nowPlayingTitle.textContent = trackInfo.title;
         nowPlayingType.textContent = trackInfo.modeLabel;
         nowPlayingQrCode.textContent = trackInfo.qrCode;
         btnForceStopAudio.disabled = false;
-        lockExplanationText.textContent = "Pemindai dikunci sementara. QR lain diabaikan sampai audio selesai.";
       } else {
         statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0";
-        statusBadgeText.textContent = "Siap memindai QR berikutnya";
-        statusBadgeText.className = "text-xs font-semibold text-emerald-400 truncate";
+        statusBadgeText.textContent = "Siap Scan";
+        statusBadgeText.className = "text-[11px] font-semibold text-emerald-400 truncate";
         lockIndicator.classList.add("hidden");
         playingLockOverlay.classList.add("hidden");
 
         playerStatePill.textContent = "Siap Scan";
-        playerStatePill.className = "text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
+        playerStatePill.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
         btnForceStopAudio.disabled = true;
-        lockExplanationText.textContent = "Audio selesai. Pemindai aktif kembali untuk kode QR berikutnya.";
       }
-
-      renderQuickPresetButtons();
     }
 
     function handleDetectedQrCode(rawQrValue, sourceLabel = "Kamera") {
       const code = (rawQrValue || "").trim();
       if (!code) return;
 
-      if (isPlayingAudio) {
-        showToast(`Scan terkunci! Tunggu "${nowPlayingTitle.textContent}" selesai.`, "warn");
-        return;
-      }
+      // Pastikan selalu false sesuai spesifikasi
+      chkIgnoreDuplicate.checked = false;
 
-      if (chkIgnoreDuplicate.checked && lastCompletedQrCode === code) {
-        showToast(`QR "${code}" baru saja diputar. Pindai QR lain.`, "warn");
+      if (isPlayingAudio) {
+        showToast(`Tunggu audio "${nowPlayingTitle.textContent}" selesai.`, "warn");
         return;
       }
 
@@ -641,18 +522,20 @@
       );
 
       if (!matched) {
-        const isDirectAudioUrl = /^https?:\/\/.+\.(mp3|wav|ogg|m4a)(\?.*)?$/i.test(code) || /^\.?\/?.+\.(mp3|wav|ogg|m4a)$/i.test(code);
+        const isDirectAudioUrl =
+          /^https?:\/\/.+\.(mp3|wav|ogg|m4a)(\?.*)?$/i.test(code) ||
+          /^\.?\/?.+\.(mp3|wav|ogg|m4a)$/i.test(code);
         if (isDirectAudioUrl) {
           matched = {
             qrCode: code,
-            title: "File Audio Langsung dari URL QR",
+            title: "Audio QR",
             mode: "url",
             audioUrl: code
           };
         } else {
           matched = {
             qrCode: code,
-            title: `Audio QR: ${code.slice(0, 24)}`,
+            title: `Audio: ${code.slice(0, 28)}`,
             mode: "synth",
             synthPreset: "chime"
           };
@@ -688,9 +571,6 @@
         status: "Diputar..."
       };
       scanHistory.unshift(historyEntry);
-      renderHistoryList();
-
-      showToast(`QR "${mappingItem.qrCode}" terbaca. Memutar audio...`, "success");
 
       if (mappingItem.mode === "url" && mappingItem.audioUrl) {
         playUrlAudio(mappingItem.audioUrl, historyEntry.id);
@@ -709,11 +589,9 @@
       const item = scanHistory.find((h) => h.id === historyId);
       if (item) {
         item.status = statusText;
-        renderHistoryList();
       }
 
       setScannerLockedState(false);
-      showToast("Audio selesai. Siap scan QR berikutnya.", "info");
     }
 
     function stopAllAudioInternal(resetUi = true) {
@@ -753,8 +631,9 @@
       }
     }
 
+    // Volume diatur penuh oleh perangkat pengguna (1.0 pada web player)
     function playUrlAudio(url, historyId) {
-      htmlAudioPlayer.volume = parseFloat(volumeSlider.value);
+      htmlAudioPlayer.volume = 1.0;
       htmlAudioPlayer.src = url;
 
       htmlAudioPlayer.onloadedmetadata = () => {
@@ -775,12 +654,11 @@
       };
 
       htmlAudioPlayer.onerror = () => {
-        showToast("URL audio gagal dimuat, memutar nada cadangan...", "warn");
+        showToast("File audio tidak ditemukan, memutar nada cadangan.", "warn");
         playSynthSequence("chime", historyId);
       };
 
       htmlAudioPlayer.play().catch(() => {
-        showToast("Memutar nada cadangan...", "warn");
         playSynthSequence("chime", historyId);
       });
     }
@@ -795,7 +673,7 @@
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = "id-ID";
       utterance.rate = 1.0;
-      utterance.volume = parseFloat(volumeSlider.value);
+      utterance.volume = 1.0;
 
       const estimatedDurationSec = Math.max(3, Math.ceil(text.length / 13));
       let elapsedMs = 0;
@@ -875,7 +753,6 @@
       const chosen = presets[presetName] || presets.chime;
       const totalSec = chosen.durationSec;
       const now = audioCtx.currentTime;
-      const masterVol = parseFloat(volumeSlider.value);
 
       chosen.notes.forEach((n) => {
         const osc = audioCtx.createOscillator();
@@ -883,7 +760,7 @@
         osc.type = n.type || "sine";
         osc.frequency.setValueAtTime(n.freq, now + n.start);
 
-        const peakGain = Math.max(0.02, masterVol * 0.25);
+        const peakGain = 0.25;
         gain.gain.setValueAtTime(0.001, now + n.start);
         gain.gain.exponentialRampToValueAtTime(peakGain, now + n.start + 0.08);
         gain.gain.exponentialRampToValueAtTime(0.0008, now + n.start + n.dur);
@@ -931,12 +808,10 @@
         cameraVideo.classList.remove("hidden");
         cameraPlaceholder.classList.add("hidden");
         scanGuideOverlay.classList.remove("hidden");
-        btnToggleCameraLabel.textContent = "Matikan Kamera";
-        btnToggleCamera.className = "px-2.5 py-1.5 rounded-md bg-rose-500 hover:bg-rose-400 text-slate-950 font-semibold text-xs transition flex items-center gap-1.5";
 
         scanFrameLoop();
       } catch (err) {
-        showToast("Kamera tidak tersedia di sini. Gunakan tombol Simulasi atau Gambar QR.", "warn");
+        showToast("Gagal mengakses kamera. Gunakan tombol ikon Gambar QR di kanan atas.", "warn");
       }
     }
 
@@ -953,8 +828,6 @@
       cameraVideo.classList.add("hidden");
       scanGuideOverlay.classList.add("hidden");
       cameraPlaceholder.classList.remove("hidden");
-      btnToggleCameraLabel.textContent = "Mulai Kamera";
-      btnToggleCamera.className = "px-2.5 py-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs transition flex items-center gap-1.5";
     }
 
     function scanFrameLoop() {
@@ -1008,7 +881,7 @@
             if (qrResult && qrResult.data) {
               handleDetectedQrCode(qrResult.data, "Gambar");
             } else {
-              showToast("Kode QR tidak terbaca pada gambar.", "warn");
+              showToast("Kode QR tidak ditemukan pada gambar.", "warn");
             }
           }
           qrFileInput.value = "";
@@ -1019,294 +892,29 @@
     });
 
     // =========================================================================
-    // 6. UI RENDERING & EVENT HANDLERS
+    // 6. EVENT HANDLERS
     // =========================================================================
-    function renderQuickPresetButtons() {
-      quickPresetButtons.innerHTML = "";
-      qrMappings.forEach((item) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        const isCurrent = isPlayingAudio && currentQrCode === item.qrCode;
-        btn.className = `text-left px-2.5 py-1.5 rounded-md border transition flex items-center justify-between gap-1.5 ${
-          isPlayingAudio
-            ? isCurrent
-              ? "bg-amber-500/15 border-amber-500/40 text-amber-200 cursor-not-allowed"
-              : "bg-[#0C0E11]/60 border-[#282F38] text-[#8B949E] cursor-not-allowed opacity-55"
-            : "bg-[#0C0E11] hover:bg-slate-800/80 border-[#282F38] hover:border-emerald-500/40 text-slate-200"
-        }`;
-
-        const badgeText = isCurrent
-          ? "Diputar"
-          : isPlayingAudio
-          ? "Terkunci"
-          : "Scan";
-
-        btn.innerHTML = `
-          <div class="min-w-0">
-            <div class="text-[11px] font-mono-code text-emerald-400 truncate">${item.qrCode}</div>
-            <div class="text-[11px] font-medium text-white truncate">${item.title}</div>
-          </div>
-          <span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded ${
-            isCurrent
-              ? "bg-amber-500 text-slate-950"
-              : isPlayingAudio
-              ? "bg-[#1A1E24] text-[#8B949E]"
-              : "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-          }">${badgeText}</span>
-        `;
-
-        btn.addEventListener("click", () => {
-          handleDetectedQrCode(item.qrCode, "Simulasi");
-        });
-
-        quickPresetButtons.appendChild(btn);
-      });
-    }
-
-    function renderHistoryList() {
-      if (scanHistory.length === 0) {
-        scanHistoryList.innerHTML = `
-          <div class="text-[#8B949E] text-center py-4 border border-dashed border-[#282F38] rounded-md text-[11px]">
-            Belum ada aktivitas scan QR.
-          </div>
-        `;
-        return;
-      }
-
-      scanHistoryList.innerHTML = "";
-      scanHistory.slice(0, 15).forEach((entry) => {
-        const row = document.createElement("div");
-        const isRunning = entry.status.includes("Diputar");
-        row.className = "px-2 py-1.5 rounded bg-[#0C0E11] border border-[#282F38] flex items-center justify-between gap-2";
-        row.innerHTML = `
-          <div class="min-w-0 flex items-center gap-1.5">
-            <span class="text-[10px] font-mono-code text-[#8B949E] shrink-0">${entry.time}</span>
-            <span class="text-[11px] font-mono-code text-emerald-400 font-semibold shrink-0">${entry.qrCode}</span>
-            <span class="text-[11px] text-slate-300 truncate">${entry.title}</span>
-          </div>
-          <span class="shrink-0 text-[10px] px-1.5 py-0.5 rounded font-medium ${
-            isRunning
-              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-              : "bg-emerald-500/15 text-emerald-300"
-          }">${entry.status}</span>
-        `;
-        scanHistoryList.appendChild(row);
-      });
-    }
-
-    function renderQrCodePreview(item) {
-      if (!item) return;
-      qrCanvasRender.innerHTML = "";
-      qrPreviewTitle.textContent = item.title;
-      qrPreviewCodeText.textContent = `Isi QR: ${item.qrCode}`;
-
-      if (typeof QRCode === "function") {
-        new QRCode(qrCanvasRender, {
-          text: item.qrCode,
-          width: 84,
-          height: 84,
-          colorDark: "#020617",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.M
-        });
-      }
-    }
-
     function renderMappingUI() {
-      mappingListContainer.innerHTML = "";
-      qrMappings.forEach((item, index) => {
-        const card = document.createElement("div");
-        card.className = "px-2.5 py-2 rounded-md bg-[#0C0E11] border border-[#282F38] flex items-center justify-between gap-2";
-
-        const modeBadge =
-          item.mode === "url"
-            ? `URL: ${item.audioUrl}`
-            : item.mode === "tts"
-            ? "TTS ID"
-            : `Synth (${item.synthPreset || "chime"})`;
-
-        card.innerHTML = `
-          <div class="min-w-0">
-            <div class="flex items-center gap-1.5">
-              <span class="text-[11px] font-mono-code font-semibold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">${item.qrCode}</span>
-              <span class="text-[10px] text-[#8B949E] truncate">${modeBadge}</span>
-            </div>
-            <h4 class="text-xs font-semibold text-white mt-0.5 truncate">${item.title}</h4>
-          </div>
-          <div class="flex items-center gap-1 shrink-0">
-            <button type="button" data-action="preview-qr" data-index="${index}" class="px-2 py-1 rounded bg-[#1A1E24] hover:bg-slate-800 text-[11px] text-slate-200 border border-[#282F38] transition">
-              QR
-            </button>
-            <button type="button" data-action="test-scan" data-index="${index}" class="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-[11px] text-emerald-300 border border-emerald-500/30 font-medium transition">
-              Uji
-            </button>
-            <button type="button" data-action="delete-map" data-index="${index}" class="px-2 py-1 rounded bg-rose-500/15 hover:bg-rose-500/25 text-[11px] text-rose-300 border border-rose-500/30 transition">
-              Hapus
-            </button>
-          </div>
-        `;
-        mappingListContainer.appendChild(card);
-      });
-
-      jsonConfigPreview.textContent = JSON.stringify(qrMappings, null, 2);
-      renderQuickPresetButtons();
-
-      if (qrMappings.length > 0) {
-        renderQrCodePreview(qrMappings[0]);
+      if (jsonConfigPreview) {
+        jsonConfigPreview.textContent = JSON.stringify(qrMappings, null, 2);
       }
     }
-
-    mappingListContainer.addEventListener("click", (e) => {
-      const btn = e.target.closest("button[data-action]");
-      if (!btn) return;
-      const index = parseInt(btn.getAttribute("data-index"), 10);
-      const action = btn.getAttribute("data-action");
-      const item = qrMappings[index];
-      if (!item) return;
-
-      if (action === "preview-qr") {
-        renderQrCodePreview(item);
-      } else if (action === "test-scan") {
-        switchTab("scanner");
-        handleDetectedQrCode(item.qrCode, "Uji Daftar");
-      } else if (action === "delete-map") {
-        qrMappings.splice(index, 1);
-        saveMappings();
-        showToast("Pemetaan QR dihapus.", "info");
-      }
-    });
-
-    selectAudioMode.addEventListener("change", () => {
-      const mode = selectAudioMode.value;
-      fieldContainerUrl.classList.toggle("hidden", mode !== "url");
-      fieldContainerTts.classList.toggle("hidden", mode !== "tts");
-      fieldContainerSynth.classList.toggle("hidden", mode !== "synth");
-    });
-
-    formAddMapping.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const qrCode = inputQrKey.value.trim();
-      const title = inputAudioTitle.value.trim();
-      const mode = selectAudioMode.value;
-      if (!qrCode || !title) return;
-
-      const newEntry = {
-        qrCode,
-        title,
-        mode,
-        audioUrl: mode === "url" ? (inputAudioUrl.value.trim() || "./audio/sample.mp3") : "",
-        ttsText: mode === "tts" ? (inputTtsText.value.trim() || title) : "",
-        synthPreset: mode === "synth" ? selectSynthPreset.value : "chime"
-      };
-
-      const existingIndex = qrMappings.findIndex(
-        (m) => m.qrCode.toLowerCase() === qrCode.toLowerCase()
-      );
-      if (existingIndex >= 0) {
-        qrMappings[existingIndex] = newEntry;
-      } else {
-        qrMappings.push(newEntry);
-      }
-
-      saveMappings();
-      inputQrKey.value = "";
-      inputAudioTitle.value = "";
-      inputAudioUrl.value = "";
-      inputTtsText.value = "";
-      showToast(`Pemetaan "${qrCode}" disimpan.`, "success");
-    });
-
-    btnResetDefaultMappings.addEventListener("click", () => {
-      qrMappings = JSON.parse(JSON.stringify(INITIAL_QR_MAPPINGS));
-      saveMappings();
-      showToast("Pemetaan dikembalikan ke default.", "info");
-    });
-
-    function switchTab(tabName) {
-      viewScanner.classList.toggle("hidden", tabName !== "scanner");
-      viewMapping.classList.toggle("hidden", tabName !== "mapping");
-      viewGuide.classList.toggle("hidden", tabName !== "guide");
-
-      const activeClass = "px-2.5 py-1 rounded-md text-xs font-semibold transition bg-[#1A1E24] text-emerald-400 border border-[#282F38]";
-      const inactiveClass = "px-2.5 py-1 rounded-md text-xs font-medium transition text-[#8B949E] hover:text-white";
-
-      tabBtnScanner.className = tabName === "scanner" ? activeClass : inactiveClass;
-      tabBtnMapping.className = tabName === "mapping" ? activeClass : inactiveClass;
-      tabBtnGuide.className = tabName === "guide" ? activeClass : inactiveClass;
-    }
-
-    tabBtnScanner.addEventListener("click", () => switchTab("scanner"));
-    tabBtnMapping.addEventListener("click", () => switchTab("mapping"));
-    tabBtnGuide.addEventListener("click", () => switchTab("guide"));
 
     btnStartCameraCenter.addEventListener("click", () => startCamera());
-    btnToggleCamera.addEventListener("click", () => {
-      if (isCameraRunning) {
-        stopCamera();
-      } else {
-        startCamera();
-      }
-    });
 
     btnSwitchFacing.addEventListener("click", () => {
       facingMode = facingMode === "environment" ? "user" : "environment";
       if (isCameraRunning) {
         startCamera();
       } else {
-        showToast(`Mode kamera: ${facingMode === "environment" ? "Belakang" : "Depan"}`, "info");
+        showToast(`Kamera diatur ke: ${facingMode === "environment" ? "Belakang" : "Depan"}`, "info");
       }
     });
-
-    btnForceStopAudio.addEventListener("click", () => {
-      if (!isPlayingAudio) return;
-      const activeItem = scanHistory.find((h) => h.status.includes("Diputar"));
-      if (activeItem) {
-        activeItem.status = "Dihentikan";
-      }
-      stopAllAudioInternal(true);
-      renderHistoryList();
-      showToast("Audio dihentikan. Pemindai dibuka kembali.", "warn");
-    });
-
-    volumeSlider.addEventListener("input", () => {
-      htmlAudioPlayer.volume = parseFloat(volumeSlider.value);
-    });
-
-    btnClearHistory.addEventListener("click", () => {
-      scanHistory = [];
-      lastCompletedQrCode = null;
-      renderHistoryList();
-    });
-
-    btnCopyConfigJson.addEventListener("click", () => {
-      const jsonText = JSON.stringify(qrMappings, null, 2);
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(jsonText).then(() => {
-          showToast("JSON disalin ke clipboard!", "success");
-        }).catch(() => fallbackCopyText(jsonText));
-      } else {
-        fallbackCopyText(jsonText);
-      }
-    });
-
-    function fallbackCopyText(text) {
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      try {
-        document.execCommand("copy");
-        showToast("JSON disalin ke clipboard!", "success");
-      } catch (e) {
-        showToast("Gagal menyalin.", "warn");
-      }
-      ta.remove();
-    }
 
     window.addEventListener("DOMContentLoaded", () => {
+      chkIgnoreDuplicate.checked = false;
       loadMappings();
       renderMappingUI();
-      renderHistoryList();
     });
   </script>
 </body>
