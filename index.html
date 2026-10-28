@@ -182,15 +182,22 @@
           </div>
 
           <!-- Active Scanning Reticle -->
-          <div id="scanGuideOverlay" class="hidden inset-0 pointer-events-none absolute flex items-center justify-center">
-            <div class="w-44 h-44 relative border border-emerald-400/35 rounded-xl">
-              <div class="-top-0.5 -left-0.5 w-4 h-4 border-t-2 border-l-2 border-emerald-400 rounded-tl absolute"></div>
-              <div class="-top-0.5 -right-0.5 w-4 h-4 border-t-2 border-r-2 border-emerald-400 rounded-tr absolute"></div>
-              <div class="-bottom-0.5 -left-0.5 w-4 h-4 border-b-2 border-l-2 border-emerald-400 rounded-bl absolute"></div>
-              <div class="-bottom-0.5 -right-0.5 w-4 h-4 border-b-2 border-r-2 border-emerald-400 rounded-br absolute"></div>
+          <div id="scanGuideOverlay" class="hidden inset-0 pointer-events-none absolute flex flex-col items-center justify-center">
+            <div id="reticleBox" class="w-48 h-48 relative border border-emerald-400/40 rounded-xl transition-all duration-150">
+              <div class="-top-0.5 -left-0.5 w-5 h-5 border-t-2 border-l-2 border-emerald-400 rounded-tl absolute"></div>
+              <div class="-top-0.5 -right-0.5 w-5 h-5 border-t-2 border-r-2 border-emerald-400 rounded-tr absolute"></div>
+              <div class="-bottom-0.5 -left-0.5 w-5 h-5 border-b-2 border-l-2 border-emerald-400 rounded-bl absolute"></div>
+              <div class="-bottom-0.5 -right-0.5 w-5 h-5 border-b-2 border-r-2 border-emerald-400 rounded-br absolute"></div>
               <div class="scan-laser"></div>
             </div>
+            <div class="mt-2.5 px-2.5 py-0.5 rounded-full bg-[#0C0E11]/85 border border-[#282F38] flex items-center gap-1.5">
+              <span id="scanPulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span id="scanEngineStatusText" class="text-[10px] font-mono-code text-emerald-300">Memindai QR...</span>
+            </div>
           </div>
+
+          <!-- Flash hijau saat QR berhasil terdeteksi -->
+          <div id="scanSuccessFlash" class="hidden pointer-events-none absolute inset-0 bg-emerald-400/25 border-2 border-emerald-400 rounded-lg z-10 transition-opacity duration-200"></div>
 
           <!-- Audio Playing Lock Overlay -->
           <div id="playingLockOverlay" class="hidden absolute inset-0 bg-[#0C0E11]/90 backdrop-blur-sm flex flex-col items-center justify-center p-5 text-center z-20">
@@ -364,22 +371,28 @@
           <div id="mappingListContainer" class="space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
 
           <!-- Pratinjau Kode QR -->
-          <div id="qrPreviewCard" class="mt-3 pt-3 border-t border-[#282F38] flex flex-col gap-2.5 bg-[#0C0E11] p-3 rounded-lg">
-            <div class="flex items-center justify-between gap-2 border-b border-[#282F38] pb-2">
-              <span class="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">Mode Kode QR</span>
+          <div id="qrPreviewCard" class="mt-3 pt-3 border-t border-[#282F38] flex flex-col gap-3 bg-[#0C0E11] p-3.5 rounded-lg">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#282F38] pb-2">
+              <span class="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider">Generator Kode QR</span>
               <label class="flex items-center gap-1.5 cursor-pointer select-none">
-                <input id="chkPortableQrMode" type="checkbox" checked class="rounded bg-[#1A1E24] border-[#282F38] text-emerald-500 focus:ring-0" />
-                <span class="text-[11px] font-medium text-slate-200">QR Mandiri (Bisa di Semua HP Tanpa Sinkronisasi)</span>
+                <input id="chkPortableQrMode" type="checkbox" class="rounded bg-[#1A1E24] border-[#282F38] text-emerald-500 focus:ring-0" />
+                <span class="text-[11px] font-medium text-slate-200">Sertakan Sumber Audio di QR (Mode Mandiri)</span>
               </label>
             </div>
-            <div class="flex items-center gap-3">
-              <div id="qrCanvasRender" class="bg-white p-1.5 rounded shrink-0"></div>
-              <div class="min-w-0 flex-1">
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+              <!-- Ukuran QR diperbesar (180x180) dengan Quiet Zone putih yang lebar agar kamera langsung merespon -->
+              <div id="qrCanvasRender" class="bg-white p-3.5 rounded-xl shrink-0 shadow-md flex items-center justify-center min-w-[208px] min-h-[208px]"></div>
+              <div class="min-w-0 flex-1 text-center sm:text-left">
                 <h4 id="qrPreviewTitle" class="text-xs font-bold text-white truncate">Pilih item di atas</h4>
-                <p id="qrPreviewCodeText" class="text-[11px] font-mono-code text-[#8B949E] truncate mt-0.5">-</p>
-                <p id="qrPreviewSubHint" class="text-[11px] text-[#8B949E] mt-1 leading-tight">
-                  QR Mandiri menyertakan path/URL audio GitHub langsung di dalam QR agar perangkat lain langsung memutar audio.
+                <p id="qrPreviewCodeText" class="text-[11px] font-mono-code text-emerald-300 break-all mt-1">-</p>
+                <p id="qrPreviewSubHint" class="text-[11px] text-[#8B949E] mt-1.5 leading-relaxed">
+                  Ukuran kode QR dioptimalkan dengan titik renggang agar kamera HP langsung mendeteksi dalam sekali arah.
                 </p>
+                <div class="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <button id="btnDownloadQr" type="button" class="px-3 py-1.5 rounded-lg bg-[#1A1E24] hover:bg-slate-800 text-emerald-300 border border-[#282F38] text-[11px] font-semibold transition">
+                    Unduh Gambar QR
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -455,6 +468,22 @@
     let isCameraRunning = false;
     let facingMode = "environment";
     let scanRafId = null;
+    let lastScanAttemptTime = 0;
+    let lastDetectedTime = 0;
+    let nativeBarcodeDetector = null;
+    let isNativeDetecting = false;
+
+    // Inisialisasi Native BarcodeDetector jika didukung oleh browser
+    if ("BarcodeDetector" in window) {
+      try {
+        nativeBarcodeDetector = new window.BarcodeDetector({ formats: ["qr_code"] });
+      } catch (e) {
+        nativeBarcodeDetector = null;
+      }
+    }
+
+    // Offscreen canvas untuk pemrosesan full-frame & center-crop zoom
+    const cropCanvas = document.createElement("canvas");
 
     // Web Audio API Synthesizer state
     let audioCtx = null;
@@ -477,6 +506,9 @@
     const cameraCanvas = document.getElementById("cameraCanvas");
     const cameraPlaceholder = document.getElementById("cameraPlaceholder");
     const scanGuideOverlay = document.getElementById("scanGuideOverlay");
+    const reticleBox = document.getElementById("reticleBox");
+    const scanEngineStatusText = document.getElementById("scanEngineStatusText");
+    const scanSuccessFlash = document.getElementById("scanSuccessFlash");
     const playingLockOverlay = document.getElementById("playingLockOverlay");
     const overlayTrackTitle = document.getElementById("overlayTrackTitle");
     const overlayQrValue = document.getElementById("overlayQrValue");
@@ -534,6 +566,7 @@
     const chkPortableQrMode = document.getElementById("chkPortableQrMode");
     const btnExportGithubConfig = document.getElementById("btnExportGithubConfig");
     const qrPreviewSubHint = document.getElementById("qrPreviewSubHint");
+    const btnDownloadQr = document.getElementById("btnDownloadQr");
 
     let isAdminUnlocked = false;
     let cheatKeyBuffer = "";
@@ -553,45 +586,17 @@
     // 3. STORAGE, GITHUB URL RESOLVER & INITIALIZATION
     // =========================================================================
     /**
-     * Mengubah link GitHub biasa (blob) atau path relatif menjadi URL audio yang bisa di-stream
-     * di semua perangkat dari GitHub Pages / Raw GitHub.
-     */
-    function resolveGithubAudioUrl(rawUrl) {
-      const url = (rawUrl || "").trim();
-      if (!url) return "";
-
-      // Konversi otomatis URL halaman GitHub:
-      // https://github.com/user/repo/blob/branch/folder/audio.mp3 -> https://raw.githubusercontent.com/user/repo/branch/folder/audio.mp3
-      const githubBlobMatch = url.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/(?:blob|raw)\/([^/]+)\/(.+)$/i);
-      if (githubBlobMatch) {
-        const [, owner, repo, branch, filePath] = githubBlobMatch;
-        return `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filePath}`;
-      }
-
-      // Jika sudah full URL (https://...) kembalikan langsung
-      if (/^https?:\/\//i.test(url)) {
-        return url;
-      }
-
-      // Jika berupa path relatif di repo GitHub Pages (mis. "./audio/pos1.mp3" atau "audio/pos1.mp3")
-      try {
-        return new URL(url, window.location.href).href;
-      } catch (e) {
-        return url;
-      }
-    }
-
-    /**
-     * Membuat payload QR Mandiri (Portable) agar saat QR dipindai di HP lain tanpa localStorage,
-     * HP tersebut tetap tahu URL audio GitHub, judul, atau teks narasinya.
+     * Membuat payload QR yang sangat ringkas agar titik-titik QR tidak rapat
+     * sehingga sangat cepat dibaca oleh kamera HP dari layar maupun cetakan.
      */
     function buildQrPayloadText(item) {
-      const usePortable = chkPortableQrMode ? chkPortableQrMode.checked : true;
+      const usePortable = chkPortableQrMode ? chkPortableQrMode.checked : false;
       if (!usePortable) {
         return item.qrCode;
       }
 
-      // Format ringkas QRA1|<id>|<mode>|<title>|<target>
+      // Jika mode URL dan audioUrl sudah berupa path pendek atau URL langsung,
+      // gunakan format super ringkas: QRA|<mode>|<judul>|<target>
       const target =
         item.mode === "url"
           ? (item.audioUrl || "")
@@ -599,23 +604,37 @@
           ? (item.ttsText || item.title || "")
           : (item.synthPreset || "chime");
 
-      return JSON.stringify({
-        qra: 1,
-        id: item.qrCode,
-        t: item.title,
-        m: item.mode,
-        u: target
-      });
+      const shortTitle = (item.title || "Audio").slice(0, 32).replace(/\|/g, "-");
+      return `QRA|${item.mode}|${shortTitle}|${target}`;
     }
 
     /**
-     * Mem-parsing isi QR apakah berupa JSON QR Mandiri, URL/Path Audio langsung, atau ID QR biasa.
+     * Mem-parsing isi QR apakah berupa format kompak QRA|..., JSON QR Mandiri,
+     * URL/Path Audio langsung, atau ID QR biasa.
      */
     function parseScannedQrPayload(rawText) {
       const code = (rawText || "").trim();
       if (!code) return null;
 
-      // 1. Cek apakah QR berformat JSON Mandiri (Portable QR)
+      // 0. Cek format kompak QRA|<mode>|<judul>|<target>
+      if (code.startsWith("QRA|")) {
+        const parts = code.split("|");
+        if (parts.length >= 4) {
+          const mode = parts[1] || "synth";
+          const title = parts[2] || "Audio QR";
+          const target = parts.slice(3).join("|");
+          return {
+            qrCode: target || title,
+            title: title,
+            mode: mode,
+            audioUrl: mode === "url" ? target : "",
+            ttsText: mode === "tts" ? target : "",
+            synthPreset: mode === "synth" ? (target || "chime") : "chime"
+          };
+        }
+      }
+
+      // 1. Cek apakah QR berformat JSON Mandiri (kompatibilitas mundur)
       if (code.startsWith("{") && code.endsWith("}")) {
         try {
           const data = JSON.parse(code);
@@ -634,11 +653,12 @@
         } catch (e) {}
       }
 
-      // 2. Cek apakah QR memiliki query parameter ?qra=... atau ?audio=... (jika QR berupa link ke GitHub Pages)
+      // 2. Cek apakah QR memiliki query parameter ?qra=... atau ?audio=... atau ?qr=...
       if (/^https?:\/\//i.test(code)) {
         try {
           const parsedUrl = new URL(code);
           const audioParam = parsedUrl.searchParams.get("audio");
+          const qrParam = parsedUrl.searchParams.get("qr");
           const titleParam = parsedUrl.searchParams.get("title");
           if (audioParam) {
             return {
@@ -649,6 +669,12 @@
               ttsText: "",
               synthPreset: "chime"
             };
+          }
+          if (qrParam) {
+            const foundByParam = qrMappings.find(
+              (m) => m.qrCode.toLowerCase() === qrParam.toLowerCase()
+            );
+            if (foundByParam) return foundByParam;
           }
         } catch (e) {}
       }
@@ -821,6 +847,17 @@
       const code = (rawQrValue || "").trim();
       if (!code) return;
 
+      const now = Date.now();
+      // Cooldown singkat 650ms agar frame kamera yang berurutan tidak memicu pemanggilan ganda pada milidetik yang sama
+      if (now - lastDetectedTime < 650) return;
+      lastDetectedTime = now;
+
+      // Efek kilatan hijau tanda QR berhasil terbaca oleh kamera
+      if (scanSuccessFlash) {
+        scanSuccessFlash.classList.remove("hidden");
+        setTimeout(() => scanSuccessFlash.classList.add("hidden"), 280);
+      }
+
       // Cheat Code melalui Scan QR
       if (code.toUpperCase() === "CHEAT-ADMIN-QR") {
         unlockAdminMenu();
@@ -835,13 +872,15 @@
         return;
       }
 
-      // 1. Cek apakah QR yang dipindai adalah QR Mandiri (Portable JSON / Query Param)
+      // 1. Cek apakah QR yang dipindai adalah QR Mandiri (QRA|..., JSON, atau Query Param)
       let matched = parseScannedQrPayload(code);
 
-      // 2. Jika bukan QR Mandiri, cari di daftar pemetaan (qrMappings) berdasarkan ID
+      // 2. Jika bukan QR Mandiri, cari di daftar pemetaan (qrMappings) berdasarkan ID atau URL
       if (!matched) {
         matched = qrMappings.find(
-          (item) => item.qrCode.toLowerCase() === code.toLowerCase()
+          (item) =>
+            item.qrCode.toLowerCase() === code.toLowerCase() ||
+            (item.audioUrl && item.audioUrl.toLowerCase() === code.toLowerCase())
         );
       }
 
@@ -870,6 +909,7 @@
         }
       }
 
+      showToast(`QR Terdeteksi: ${matched.title}`, "success");
       startAudioForQr(matched, sourceLabel);
     }
 
@@ -1135,7 +1175,7 @@
     }
 
     // =========================================================================
-    // 5. CAMERA & QR SCANNING ENGINE
+    // 5. CAMERA & QR SCANNING ENGINE (DUAL-ENGINE + MULTI-SCALE CROP)
     // =========================================================================
     async function startCamera() {
       // Unlock AudioContext saat interaksi klik tombol kamera
@@ -1154,25 +1194,41 @@
       try {
         let stream = null;
         try {
+          // Gunakan resolusi lebih tajam (ideal 1280x720) dan continuous focus agar kode QR mudah fokus
           stream = await navigator.mediaDevices.getUserMedia({
             video: {
               facingMode: { ideal: facingMode },
-              width: { ideal: 640 },
-              height: { ideal: 640 }
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+              advanced: [{ focusMode: "continuous" }]
             },
             audio: false
           });
         } catch (firstErr) {
           // Fallback ke konfigurasi video standar jika constraint spesifik gagal
           stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
+            video: { facingMode: facingMode },
             audio: false
-          });
+          }).catch(() =>
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+          );
         }
 
         cameraStream = stream;
         cameraVideo.srcObject = stream;
         cameraVideo.setAttribute("playsinline", "true");
+        cameraVideo.muted = true;
+
+        // Tunggu metadata video siap sebelum memanggil play()
+        await new Promise((resolve) => {
+          if (cameraVideo.readyState >= 1) {
+            resolve();
+          } else {
+            cameraVideo.onloadedmetadata = () => resolve();
+            setTimeout(resolve, 800);
+          }
+        });
+
         await cameraVideo.play();
 
         isCameraRunning = true;
@@ -1181,6 +1237,11 @@
         scanGuideOverlay.classList.remove("hidden");
         if (btnToggleCameraLabel) {
           btnToggleCameraLabel.textContent = "Matikan Kamera";
+        }
+        if (scanEngineStatusText) {
+          scanEngineStatusText.textContent = nativeBarcodeDetector
+            ? "Memindai QR (Turbo)..."
+            : "Memindai QR (Aktif)...";
         }
 
         showToast("Kamera QR aktif. Arahkan ke kode QR.", "success");
@@ -1204,6 +1265,7 @@
       }
       cameraVideo.srcObject = null;
       isCameraRunning = false;
+      isNativeDetecting = false;
 
       if (resetUi) {
         cameraVideo.classList.add("hidden");
@@ -1215,37 +1277,106 @@
       }
     }
 
-    function scanFrameLoop() {
+    /**
+     * Memindai 1 frame gambar/video menggunakan jsQR dengan 2 tahap:
+     * Tahap 1: Full-frame dengan resolusi proporsional (maks 640px)
+     * Tahap 2: Center-Crop 2x Zoom pada bagian tengah jika QR berukuran kecil atau agak jauh
+     */
+    function decodeQrWithJsQrMultiPass(sourceElem, srcW, srcH) {
+      if (typeof jsQR !== "function" || srcW <= 0 || srcH <= 0) return null;
+
+      // TAHAP 1: Full Frame (dibatasi maks 640px agar tajam namun cepat diproses)
+      const maxDim = 640;
+      const scale = Math.min(1, maxDim / Math.max(srcW, srcH));
+      const targetW = Math.max(120, Math.floor(srcW * scale));
+      const targetH = Math.max(120, Math.floor(srcH * scale));
+
+      cameraCanvas.width = targetW;
+      cameraCanvas.height = targetH;
+      const ctx = cameraCanvas.getContext("2d", { willReadFrequently: true });
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(sourceElem, 0, 0, targetW, targetH);
+
+      const fullData = ctx.getImageData(0, 0, targetW, targetH);
+      const fullResult = jsQR(fullData.data, fullData.width, fullData.height, {
+        inversionAttempts: "attemptBoth"
+      });
+      if (fullResult && fullResult.data && fullResult.data.trim()) {
+        return fullResult.data.trim();
+      }
+
+      // TAHAP 2: Center-Crop (55% area tengah video) untuk menangkap kode QR yang lebih kecil/jauh
+      const cropSize = Math.floor(Math.min(srcW, srcH) * 0.55);
+      if (cropSize >= 80) {
+        const sx = Math.floor((srcW - cropSize) / 2);
+        const sy = Math.floor((srcH - cropSize) / 2);
+        const outSize = 400;
+
+        cropCanvas.width = outSize;
+        cropCanvas.height = outSize;
+        const cropCtx = cropCanvas.getContext("2d", { willReadFrequently: true });
+        cropCtx.imageSmoothingEnabled = false;
+        cropCtx.drawImage(sourceElem, sx, sy, cropSize, cropSize, 0, 0, outSize, outSize);
+
+        const cropData = cropCtx.getImageData(0, 0, outSize, outSize);
+        const cropResult = jsQR(cropData.data, cropData.width, cropData.height, {
+          inversionAttempts: "attemptBoth"
+        });
+        if (cropResult && cropResult.data && cropResult.data.trim()) {
+          return cropResult.data.trim();
+        }
+      }
+
+      return null;
+    }
+
+    function scanFrameLoop(timestamp) {
       if (!isCameraRunning) return;
 
+      // Throttle pemindaian sekitar ~12-15 kali per detik (setiap 70ms) agar UI tidak freeze dan fokus kamera stabil
       if (
         !isPlayingAudio &&
-        cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA
+        cameraVideo.readyState >= 2 &&
+        timestamp - lastScanAttemptTime >= 70
       ) {
+        lastScanAttemptTime = timestamp;
         const vw = cameraVideo.videoWidth;
         const vh = cameraVideo.videoHeight;
-        if (vw > 0 && vh > 0) {
-          cameraCanvas.width = vw;
-          cameraCanvas.height = vh;
-          const ctx = cameraCanvas.getContext("2d", { willReadFrequently: true });
-          ctx.drawImage(cameraVideo, 0, 0, vw, vh);
-          const imageData = ctx.getImageData(0, 0, vw, vh);
 
-          if (typeof jsQR === "function") {
-            const qrResult = jsQR(imageData.data, imageData.width, imageData.height, {
-              inversionAttempts: "dontInvert"
-            });
-            if (qrResult && qrResult.data) {
-              handleDetectedQrCode(qrResult.data, "Kamera");
-            }
+        if (vw > 0 && vh > 0) {
+          // 1. Gunakan Native BarcodeDetector secara asinkron jika tersedia
+          if (nativeBarcodeDetector && !isNativeDetecting) {
+            isNativeDetecting = true;
+            nativeBarcodeDetector
+              .detect(cameraVideo)
+              .then((barcodes) => {
+                isNativeDetecting = false;
+                if (!isPlayingAudio && barcodes && barcodes.length > 0) {
+                  const raw = barcodes[0].rawValue;
+                  if (raw && raw.trim()) {
+                    handleDetectedQrCode(raw.trim(), "Kamera");
+                  }
+                }
+              })
+              .catch(() => {
+                isNativeDetecting = false;
+              });
           }
+
+          // 2. Jalankan jsQR Multi-Pass (Full Frame + Center-Crop) sebagai pendeteksi utama/pendamping
+          try {
+            const decodedText = decodeQrWithJsQrMultiPass(cameraVideo, vw, vh);
+            if (decodedText) {
+              handleDetectedQrCode(decodedText, "Kamera");
+            }
+          } catch (e) {}
         }
       }
 
       scanRafId = requestAnimationFrame(scanFrameLoop);
     }
 
-    // Handler unggah gambar QR
+    // Handler unggah gambar QR (Multi-Engine + Multi-Scale)
     qrFileInput.addEventListener("change", (e) => {
       unlockAudioEngine();
       const file = e.target.files && e.target.files[0];
@@ -1254,24 +1385,45 @@
       const reader = new FileReader();
       reader.onload = (ev) => {
         const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
+        img.onload = async () => {
+          // 1. Coba dengan Native BarcodeDetector terlebih dahulu jika ada
+          if (nativeBarcodeDetector) {
+            try {
+              const barcodes = await nativeBarcodeDetector.detect(img);
+              if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
+                handleDetectedQrCode(barcodes[0].rawValue, "Gambar QR");
+                return;
+              }
+            } catch (err) {}
+          }
 
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          if (typeof jsQR === "function") {
-            const qrResult = jsQR(imageData.data, imageData.width, imageData.height, {
-              inversionAttempts: "attemptBoth"
-            });
-            if (qrResult && qrResult.data) {
-              handleDetectedQrCode(qrResult.data, "Gambar QR");
-            } else {
-              showToast("Kode QR tidak terdeteksi pada gambar tersebut.", "warn");
+          // 2. Coba dengan jsQR pada beberapa skala resolusi (800px, 1200px, dan ukuran asli)
+          const scalesToTry = [800, 1200, Math.max(img.width, img.height)];
+          const tempCanvas = document.createElement("canvas");
+          const tempCtx = tempCanvas.getContext("2d", { willReadFrequently: true });
+
+          for (const maxS of scalesToTry) {
+            const ratio = Math.min(1, maxS / Math.max(img.width, img.height));
+            const w = Math.max(100, Math.floor(img.width * ratio));
+            const h = Math.max(100, Math.floor(img.height * ratio));
+            tempCanvas.width = w;
+            tempCanvas.height = h;
+            tempCtx.imageSmoothingEnabled = false;
+            tempCtx.drawImage(img, 0, 0, w, h);
+
+            const imageData = tempCtx.getImageData(0, 0, w, h);
+            if (typeof jsQR === "function") {
+              const qrResult = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: "attemptBoth"
+              });
+              if (qrResult && qrResult.data) {
+                handleDetectedQrCode(qrResult.data, "Gambar QR");
+                return;
+              }
             }
           }
+
+          showToast("Kode QR tidak terdeteksi pada gambar tersebut.", "warn");
         };
         img.onerror = () => {
           showToast("Gagal memuat file gambar.", "warn");
@@ -1377,26 +1529,54 @@
       const payloadText = buildQrPayloadText(item);
       const isPortable = chkPortableQrMode && chkPortableQrMode.checked;
 
-      qrPreviewCodeText.textContent = isPortable
-        ? `ID: ${item.qrCode} (Mode Mandiri Aktif)`
-        : `Isi QR: ${item.qrCode}`;
+      qrPreviewCodeText.textContent = `Isi QR: ${payloadText}`;
 
       if (qrPreviewSubHint) {
         qrPreviewSubHint.textContent = isPortable
-          ? "QR Mandiri menyertakan data/link audio langsung di dalam QR agar bisa dipindai di perangkat mana pun."
-          : "Mode ID Singkat: Pastikan daftar ini sudah disimpan ke INITIAL_QR_MAPPINGS atau qr-mappings.json di GitHub.";
+          ? "Mode Mandiri Aktif (Format Kompak QRA): Menyimpan sumber audio langsung di QR dengan kerapatan rendah agar tetap mudah dipindai kamera."
+          : "Mode Cepat (Direkomendasikan): Kode QR sangat renggang & langsung terdeteksi kamera. Gunakan 'Salin JSON GitHub' untuk sinkronisasi ke repo.";
       }
 
       if (typeof QRCode === "function") {
         new QRCode(qrCanvasRender, {
           text: payloadText,
-          width: 96,
-          height: 96,
-          colorDark: "#020617",
+          width: 180,
+          height: 180,
+          colorDark: "#000000",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.L
         });
       }
+    }
+
+    if (btnDownloadQr) {
+      btnDownloadQr.addEventListener("click", () => {
+        if (!currentPreviewItem || !qrCanvasRender) return;
+        const qrImg = qrCanvasRender.querySelector("img") || qrCanvasRender.querySelector("canvas");
+        if (!qrImg) {
+          showToast("Gambar QR belum siap.", "warn");
+          return;
+        }
+
+        // Buat canvas dengan quiet zone putih (margin 24px) agar saat diunduh/dicetak mudah dipindai
+        const exportCanvas = document.createElement("canvas");
+        const size = 260;
+        const pad = 28;
+        exportCanvas.width = size;
+        exportCanvas.height = size;
+        const ctx = exportCanvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, size, size);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(qrImg, pad, pad, size - pad * 2, size - pad * 2);
+
+        const link = document.createElement("a");
+        const safeName = (currentPreviewItem.qrCode || "qr-audio").replace(/[^a-z0-9-_]/gi, "_");
+        link.download = `QR-${safeName}.png`;
+        link.href = exportCanvas.toDataURL("image/png");
+        link.click();
+        showToast("Gambar kode QR berhasil diunduh.", "success");
+      });
     }
 
     if (chkPortableQrMode) {
